@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define DLLEXPORT extern __declspec(dllexport)
+
 struct dict_item_s;
 struct dict_s;
 
-struct dict_item_s {
-
+struct dict_item_s
+{
 	char* key;
 	void* value;
 
@@ -24,28 +26,28 @@ typedef struct dict_item_s  dict_item;
 typedef struct dict_s       dict;
 
 // Allocaters
-int        dict_create    ( dict **dictionary );
+DLLEXPORT int        dict_create    ( dict **dictionary );
 
 // Constructors
-int        dict_construct ( dict **dictionary, size_t count );
-int        dict_from_keys ( dict **dictionary, char      **keys,   size_t count );
+DLLEXPORT int        dict_construct ( dict **dictionary, size_t count );
+DLLEXPORT int        dict_from_keys ( dict **dictionary, char      **keys,   size_t    count );
 
 // Accessors
-dict_item *dict_get       ( dict  *dictionary, char       *name );
-int        dict_items     ( dict  *dictionary, dict_item **items ); 
-int        dict_values    ( dict  *dictionary, char      **values );
-int        dict_keys      ( dict  *dictionary, char      **keys );
+DLLEXPORT void      *dict_get       ( dict  *dictionary, char       *name );
+DLLEXPORT int        dict_items     ( dict  *dictionary, dict_item **items );
+DLLEXPORT int        dict_values    ( dict  *dictionary, char      **values );
+DLLEXPORT int        dict_keys      ( dict  *dictionary, char      **keys );
 
 // Mutators
-int        dict_add       ( dict  *dictionary, char       *name,   void  *val );
-void      *dict_pop       ( dict  *dictionary, char       *name );
-dict_item *dict_pop_item  ( dict  *dictionary, char       *name );
+DLLEXPORT int        dict_add       ( dict  *dictionary, char       *name,  void      *val );
+DLLEXPORT int        dict_pop       ( dict  *dictionary, char       *name, void      **value);
+DLLEXPORT int        dict_pop_item  ( dict  *dictionary, char       *name, dict_item  *item);
 
 // Shallow copy
-dict      *dict_copy      ( dict  *dictionary, dict      **target );
+DLLEXPORT dict      *dict_copy      ( dict  *dictionary, dict      **target );
 
 // Clear all items
-dict      *dict_clear     ( dict  *dictionary );
+DLLEXPORT dict      *dict_clear     ( dict  *dictionary );
 
 // Destructors
-int        dict_destroy   ( dict  *dictionary );
+DLLEXPORT int        dict_destroy   ( dict  *dictionary );

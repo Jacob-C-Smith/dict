@@ -34,9 +34,8 @@ int main(int argc, const char* argv[])
 	dict_add(d, "C", 0x5678);
 	dict_add(d, "D", 0x9ABC);
 
-	void *p = dict_pop(d, "D");
-
-	printf("0x%p\n", p);
+	dict* target = 0;
+	dict_copy(d, &target);
 
 	// Write items to item list
 	dict_items(d, items);
