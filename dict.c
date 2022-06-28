@@ -83,6 +83,8 @@ int   dict_create    ( dict **dictionary )
     // Allocate for dictionary
     dict *ret = calloc(1, sizeof(dict));
 
+    *dictionary = ret;
+
     // Error checking
     {
         #ifndef NDEBUG
@@ -90,8 +92,6 @@ int   dict_create    ( dict **dictionary )
                 goto no_mem;
         #endif
     }
-
-    *dictionary = ret;
 
     // Success
     return 1;
@@ -675,7 +675,7 @@ int   dict_pop_item  ( dict  *dictionary, char       *name, dict_item *item )
     }
 }
 
-DLLEXPORT dict* dict_copy(dict* dictionary, dict** target)
+int   dict_copy      ( dict  *dictionary, dict** target)
 {
     
     // Argument check
@@ -710,7 +710,7 @@ DLLEXPORT dict* dict_copy(dict* dictionary, dict** target)
     dict_values(dictionary, values);
 
     // Insert each value
-    for (size_t i = 0; i < dictionary->n_entries; i++)
+    for (size_t i = 0; i < dictionary->n_entries && keys[i]; i++)
         dict_add(*target, keys[i], values[i]);
 
     // Free the lists
@@ -748,7 +748,7 @@ DLLEXPORT dict* dict_copy(dict* dictionary, dict** target)
 
 }
 
-DLLEXPORT dict* dict_clear(dict* dictionary)
+int   dict_clear     ( dict  *dictionary)
 {
     // Argument check
     {
@@ -763,9 +763,22 @@ DLLEXPORT dict* dict_clear(dict* dictionary)
 
         // Check for an item
         if (dictionary->entries[i])
+        {
+            dict_item *di = dictionary->entries[i];
 
-            // Free the item
-            free(dictionary->entries[i]);
+            while (di)
+            {
+                dict_item *n = di->next;
+                
+                // Free the item
+                free(di);
+
+                di = n;
+            }
+
+            
+        }
+    return 0;
 
     // Error handling
     {
