@@ -63,7 +63,7 @@ unsigned long long mmh64 ( void* k, size_t l )
         // Argument error
         {
             no_k:
-                printf("[Dict] Null pointer provided for \"k\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"k\" in call to function \"%s\"\n", __FUNCTION__);
                 return 0;
         }
     }
@@ -102,7 +102,7 @@ int   dict_create    ( dict **dictionary )
         {
             no_dictionary:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -111,7 +111,7 @@ int   dict_create    ( dict **dictionary )
         {
             no_mem:
             #ifndef NDEBUG
-                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -160,7 +160,7 @@ int   dict_construct ( dict **dictionary, size_t      count )
         {
             no_dictionary:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -169,7 +169,7 @@ int   dict_construct ( dict **dictionary, size_t      count )
         {
             no_mem:
             #ifndef NDEBUG
-                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -225,7 +225,7 @@ int   dict_from_keys ( dict **dictionary, char      **keys, size_t      count )
         {
             no_dictionary:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -234,7 +234,7 @@ int   dict_from_keys ( dict **dictionary, char      **keys, size_t      count )
         {
             no_mem:
             #ifndef NDEBUG
-                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -302,10 +302,10 @@ int   dict_add       ( dict  *dictionary, char       *name, void       *val )
         // Argument errors
         {
             no_dictionary:
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 return 0;
             no_name:
-                printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n", __FUNCTION__);
                 return 0;
         }
 
@@ -313,7 +313,7 @@ int   dict_add       ( dict  *dictionary, char       *name, void       *val )
         {
             no_mem:
                 #ifndef NDEBUG
-                    printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+                    printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -353,12 +353,12 @@ void *dict_get       ( dict  *dictionary, char       *name )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
             no_name:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -408,7 +408,7 @@ int   dict_items     ( dict  *dictionary, dict_item **items)
         {
             no_dictioanry:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -459,7 +459,7 @@ int   dict_values    ( dict  *dictionary, char      **values)
         {
             no_dictioanry:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -511,7 +511,7 @@ int   dict_keys      ( dict  *dictionary, char      **keys)
         {
             no_dictioanry:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
         }
@@ -576,13 +576,13 @@ int   dict_pop       ( dict  *dictionary, char       *name, void      **value)
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n\"", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n\"", __FUNCTION__);
                 #endif
                 return 0;
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n\"", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n\"", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -591,7 +591,7 @@ int   dict_pop       ( dict  *dictionary, char       *name, void      **value)
         {
             no_item:
             #ifndef NDEBUG
-                printf("[Dictionary] Failed to find value from key \"%s\" in call to function \"%s\"\n", name, __FUNCSIG__);
+                printf("[Dictionary] Failed to find value from key \"%s\" in call to function \"%s\"\n", name, __FUNCTION__);
             #endif
             return 0;
         }
@@ -653,13 +653,13 @@ int   dict_pop_item  ( dict  *dictionary, char       *name, dict_item *item )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n\"", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n\"", __FUNCTION__);
                 #endif
                 return 0;
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n\"", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"name\" in call to function \"%s\"\n\"", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -668,7 +668,7 @@ int   dict_pop_item  ( dict  *dictionary, char       *name, dict_item *item )
         {
             no_item:
             #ifndef NDEBUG
-                printf("[Dictionary] Failed to find value from key \"%s\" in call to function \"%s\"\n", name, __FUNCSIG__);
+                printf("[Dictionary] Failed to find value from key \"%s\" in call to function \"%s\"\n", name, __FUNCTION__);
             #endif
             return 0;
         }
@@ -726,12 +726,12 @@ int   dict_copy      ( dict  *dictionary, dict** target)
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
             no_target:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"target\" in call to function \"%s\"\n", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"target\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -740,7 +740,7 @@ int   dict_copy      ( dict  *dictionary, dict** target)
 		{
 			no_mem:
 			#ifndef NDEBUG
-				printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCSIG__);
+				printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
 			#endif
 			return 0;
 		}
@@ -787,7 +787,7 @@ int   dict_clear     ( dict  *dictionary)
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                    printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
                 return 0;
         }
@@ -821,7 +821,7 @@ int   dict_destroy   ( dict  *dictionary )
     {
         no_dictionary:
             #ifndef NDEBUG
-                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCSIG__);
+                printf("[Dict] Null pointer provided for \"dictionary\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
             return 0;
     }
