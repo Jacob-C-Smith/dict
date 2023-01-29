@@ -1,6 +1,6 @@
 INCLUDES=-I./include -I/usr/local/include -I../dict/include
 CC=gcc
-CFLAGS= -g -fdeclspec -fms-extensions
+CFLAGS= -g -fdeclspec -fms-extensions -w
 OBJECT_DIR=./object
 AS=nasm
 SRCS:=$(wildcard *.c)
@@ -11,7 +11,7 @@ SOTARGET=lib$(TARGET).so
 
 .PHONY: depend clean
 
-all: $(TARGET)
+all: $(TARGET) libs
 
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(OBJS)
@@ -20,14 +20,14 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	rm *.o $(TARGET) *.a *.so
+	rm *.o $(TARGET) *.a *.so || true
 
 run: $(TARGET)
 	./$(TARGET)
 
 libs: $(OBJS)
 	$(CC) -c $(CFLAGS) $(INCLUDES) -o $(OBJS)
-	ar -rc $(SLIBTARGET) $(TARGET).o
+	ar -rc $(SLIBTARGET) $(TARGET).o || true
 	$(CC) $(CFLAGS) -fPIC $(INCLUDES) -o $(SLIBTARGET) $(OBJS)
 	$(CC) -shared -o $(SOTARGET) $(OBJS)
 
