@@ -18,6 +18,8 @@ struct dict_s {
     void               **values;        // Iterable values
 };
 
+typedef struct dict_item_s dict_item;
+
 unsigned long long mmh64 ( void* k, size_t l )
 {
 

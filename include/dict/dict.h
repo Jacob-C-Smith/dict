@@ -26,11 +26,6 @@ struct dict_s;
 
 // Type definitions
 /** !
- *  @brief The type definition of a dictionary item struct
- */
-typedef struct dict_item_s dict_item;
-
-/** !
  *  @brief The type definition of a dictionary struct
  */
 typedef struct dict_s dict;
