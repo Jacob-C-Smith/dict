@@ -4,6 +4,13 @@ x64/
 # Prerequisites
 *.d
 
+#CMake
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
 # Object files
 *.o
 *.ko

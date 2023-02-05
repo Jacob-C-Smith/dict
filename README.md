@@ -112,7 +112,6 @@ int        dict_keys      ( dict  *dictionary, char      **keys );
 // Mutators
 int        dict_add       ( dict  *dictionary, char       *name, void      *val );
 int        dict_pop       ( dict  *dictionary, char       *name, void      **value);
-int        dict_pop_item  ( dict  *dictionary, char       *name, dict_item  *item);
 
 // Shallow copy
 dict      *dict_copy      ( dict  *dictionary, dict      **target );
