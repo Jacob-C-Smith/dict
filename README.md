@@ -1,27 +1,30 @@
 # dict
  A minimal dictionary implementation written in C. 
- > 1.   [Build instructions](#build_instructions)
+ 
+ > 1 [Build instructions](#build-instructions)
  >
- > 2.   [Example code](#example-code)
- >>
- >> 2.1 [Example output](#example-output)
+ > 2 [Example](#example)
  >
- > 3. [Definitions](#definitions)
+ >> 2.1 [Example code](#example-code)
  >>
- >> 3.1. [Type definitions](#type-definitions)
- >> 
- >> 3.2. [Function definitions](#function-definitions)
+ >> 2.2 [Example output](#example-output)
+ >
+ > 3 [Definitions](#definitions)
+ >
+ >> 3.1 [Type definitions](#type-definitions)
+ >>
+ >> 3.2 [Function definitions](#function-definitions)
  
  ## Build instructions
- To build dict for Windows machines, open the base directory in Visual Studio, and select your desired target(s)
+ To build dict for Windows machines, open the base directory in Visual Studio, and build your desired target(s)
 
- To build on UNIX like machines, run the following 
+ To build on UNIX like machines, run the following commands
  ```bash
  $ cmake .
  $ make
  ```
-
- ## Example code
+ ## Example
+ ### Example code
  This is the example code for the dict_example CMake target
  ```c
 // Standard library
