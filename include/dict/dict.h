@@ -59,16 +59,16 @@ DLLEXPORT int dict_construct ( dict **pp_dict, size_t size );
 /** !
  *  Construct a dictionary from an array of strings
  *
- * @param pp_dict     return
- * @param keys        pointer to array of strings
- * @param keys_length length of keys array
+ * @param pp_dict return
+ * @param keys    pointer to null terminated array of strings
+ * @param size    number of hash table entries. 
  *
  * @sa dict_create
  * @sa destroy_dict
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_from_keys ( dict **pp_dict, char **keys, size_t keys_length );
+DLLEXPORT int dict_from_keys ( dict **pp_dict, char **keys, size_t size );
 
 // Accessors
 /** !
@@ -88,14 +88,14 @@ DLLEXPORT void *dict_get ( dict *p_dict, char *key );
  *  Get a dictionarys' values, or the number of properties in the dictionary
  *
  * @param p_dict dictionary
- * @param values   return -OR- null pointer
+ * @param values return -OR- null pointer
  *
  * @sa dict_get
  * @sa dict_keys
  *
  * @return 1 on success, 0 on error, if values != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_values ( dict *p_dict, char **values );
+DLLEXPORT size_t dict_values ( dict *p_dict, void **values );
 
 /** !
  *  Get a dictionarys' keys, or the number of properties in the dictionary
@@ -161,6 +161,19 @@ DLLEXPORT int dict_copy ( dict *p_dict, dict **pp_dict );
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int dict_clear ( dict *p_dict );
+
+/** !
+ *  Remove all properties from a dictionary, and deallocate values with free_func
+ *
+ * @param p_dict       dictionary
+ * @param free_fun_ptr pointer to deallocator function 
+ * 
+ * @sa dict_clear
+ * @sa dict_copy
+ *
+ * @return 1 on success, 0 on error
+ */
+DLLEXPORT int dict_free_clear ( dict *p_dict, void (*free_func)(void *) );
 
 // Destructors
 /** !

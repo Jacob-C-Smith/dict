@@ -55,7 +55,7 @@ unsigned long long mmh64 ( void* k, size_t l )
 
     }
 
-    unsigned char* d2 = data;
+    unsigned char* d2 = (unsigned char *)data;
 
     switch (l & 7)
     {
@@ -106,10 +106,8 @@ int dict_create ( dict **pp_dict )
 
     // Error checking
     {
-        #ifndef NDEBUG
-            if( p_dict == (void *) 0 )
-                goto no_mem;
-        #endif
+        if( p_dict == (void *) 0 )
+            goto no_mem;
     }
 
     // Return the allocated memory
@@ -242,7 +240,7 @@ int dict_construct ( dict **pp_dict, size_t size )
     }
 }
 
-int dict_from_keys ( dict **pp_dict, char **keys, size_t keys_length )
+int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
 {
 
     // Argument check
@@ -255,7 +253,7 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t keys_length )
         if ( keys == 0 )
             return 0;
         
-        if ( keys_length == 0 )
+        if ( size == 0 )
             return 0;
     }
 
@@ -263,14 +261,14 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t keys_length )
     dict* p_dict = 0;
 
     // Allocation failed
-    if ( dict_construct(pp_dict, keys_length) == 0 )
+    if ( dict_construct(pp_dict, size) == 0 )
         return 0;
     
     p_dict = *pp_dict;
 
     // Set the count and allocate for entries
-    p_dict->entry_max = keys_length;
-    p_dict->entries     = calloc(keys_length, sizeof(dict_item *));
+    p_dict->entry_max = size;
+    p_dict->entries   = calloc(size, sizeof(dict_item *));
 
     // Error checking
     {
@@ -278,9 +276,13 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t keys_length )
             goto no_mem;
     }
 
-    // Add keys to the dictionary
+    // Iterate over each key
     for (size_t i = 0; keys[i]; i++)
+    {
+
+        // Add the key to the dictionary
         dict_add(p_dict, keys[i], (void *)0);
+    }
 
     // Success
     return 1;
@@ -330,11 +332,13 @@ void *dict_get ( dict *p_dict, char *key )
     
     // Iterate over each item in the linked list
     for (; ret != 0; ret = ret->next)
+    {
 
-        // Is it the one we're looking for?
+        // Is it the right entry?
         if ( strcmp(key, ret->key) == 0 )
             break;
-    
+    }
+
     // Return the value if it exists, otherwise null pointer
     return (ret) ? (void *)ret->value : 0;
 
@@ -362,7 +366,7 @@ void *dict_get ( dict *p_dict, char *key )
     }
 }
 
-size_t dict_values ( dict *p_dict, char **values )
+size_t dict_values ( dict *p_dict, void **values )
 {
     // Argument check
     {
@@ -462,14 +466,20 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
     }
 
     // Initialized data
-    unsigned long long  h        = mmh64(key, strlen(key));
+    unsigned long long  h        = mmh64((void *)key, strlen(key));
     dict_item          *property = p_dict->entries[h % p_dict->entry_max];
 
     // Find the key in the hash table
     {
+
+        // Iterate through the linked list
         for (; property != 0; property = property->next)
+        {
+
+            // Is this the correct entry?
             if ( strcmp(key, property->key) == 0 )
                 break;
+        }
     }
 
     // Make a new property
@@ -481,14 +491,12 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
 
         // Error checking
         {
-            #ifndef NDEBUG
-                if(property == (void *)0)
-                    goto no_mem;
-            #endif
+            if(property == (void *)0)
+                goto no_mem;
         }
 
         // Set the property
-        property->key = key;
+        property->key = (char *) key;
         property->value = p_value;
 
         // Insert the hash
@@ -498,7 +506,7 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
         p_dict->entries[(h % p_dict->entry_max)] = property;
 
         // Update the iterables
-        p_dict->keys[p_dict->entry_count]   = key;
+        p_dict->keys[p_dict->entry_count]   = (char *) key;
         p_dict->values[p_dict->entry_count] = p_value;
 
         // Increment the entry counter
@@ -517,12 +525,10 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
     
             // Error checking
             {
-                #ifndef NDEBUG
-                    if ( p_dict->keys == (void *) 0 )
-                        goto no_mem;
-                    if ( p_dict->keys == (void *) 0 )
-                        goto no_mem;
-                #endif
+                if ( p_dict->keys == (void *) 0 )
+                    goto no_mem;
+                if ( p_dict->keys == (void *) 0 )
+                    goto no_mem;
             }
         }
     }
@@ -681,12 +687,10 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
         // Error checking
         {
-            #ifndef NDEBUG
-                if ( p_dict->keys == (void *) 0 )
-                    goto no_mem;
-                if ( p_dict->keys == (void *) 0 )
-                    goto no_mem;
-            #endif
+            if ( p_dict->keys == (void *) 0 )
+                goto no_mem;
+            if ( p_dict->keys == (void *) 0 )
+                goto no_mem;
         }
     }
 
@@ -758,12 +762,10 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
 
     // Error checking
     {
-        #ifndef NDEBUG
-            if(keys == (void *)0)
-                goto no_mem;
-            if (values == (void*)0)
-                goto no_mem;
-        #endif 
+        if(keys == (void *)0)
+            goto no_mem;
+        if (values == (void*)0)
+            goto no_mem;
     }
 
     // Construct a new dictionary of the same size
@@ -773,10 +775,14 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
     dict_keys(p_dict, keys);
     dict_values(p_dict, values);
 
-    // Insert each value
+    // Iterate over each value
     for (size_t i = 0; i < p_dict->entry_count && keys[i]; i++)
+    {
+        
+        // Insert each value
         dict_add(*pp_dict, keys[i], values[i]);
-
+    }
+    
     // Free the lists
     free(keys);
     free(values);
@@ -821,34 +827,43 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
 
 int dict_clear ( dict  *p_dict )
 {
+
     // Argument check
     {
         #ifndef NDEBUG
             if (p_dict == (void*)0)
                 goto no_dictionary;
         #endif
+
+        if ( p_dict->entry_count == 0 )
+            return 1;
     }
 
     // Iterate over each hash table item
     for (size_t i = 0; i < p_dict->entry_max; i++)
+    {
 
-        // p_dict for an item
+        // Is there a valid entry at the index?
         if (p_dict->entries[i])
         {
+
+            // Initialized data
             dict_item *di = p_dict->entries[i];
 
+            // Iterate through linked list
             while (di)
             {
+
                 dict_item *n = di->next;
                 
                 // Free the item
                 free(di);
 
+                // Iterate
                 di = n;
             }
-
-            
         }
+    }
 
     // Success
     return 1;
@@ -868,6 +883,79 @@ int dict_clear ( dict  *p_dict )
         }
     }
 }
+
+int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
+{
+
+    // Argument check
+    {
+        #ifndef NDEBUG
+            if ( p_dict == (void *) 0 )
+                goto no_dictionary;
+            if ( free_func == (void *) 0 )
+                goto no_free_func;
+        #endif
+
+        if ( p_dict->entry_count == 0 )
+            return 1;
+    }
+
+    // Iterate over each hash table item
+    for (size_t i = 0; i < p_dict->entry_max; i++)
+    {
+
+        // Is there a valid entry at the index?
+        if (p_dict->entries[i])
+        {
+
+            // Initialzied data
+            dict_item *di = p_dict->entries[i];
+
+            // Iterate through linked list
+            while (di)
+            {
+                dict_item *n = di->next;
+                
+                // Call the specified deallocator
+                free_func(di->value);
+
+                // Free the item
+                free(di);
+
+                // Iterate 
+                di = n;
+            }
+        }
+    }
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_dictionary:
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+                
+                // Error
+                return 0;
+
+            no_free_func:
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"free_func\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+                
+                // Error
+                return 0;
+            
+        }
+    }
+}
+
 
 int dict_destroy ( dict  *p_dict )
 {
