@@ -2,17 +2,17 @@
 
 struct dict_item_s
 {
-	char               *key;   // The key
-	void               *value; // The value
+    char               *key;   // The key
+    void               *value; // The value
     size_t              index; // The index in the iterable lists
 
-	struct dict_item_s *next;  // The next entry
+    struct dict_item_s *next;  // The next entry
 };
 
 struct dict_s {
-	struct dict_item_s **entries;       // Hash table contents
-	size_t               entry_max,     // Hash table elements
-		                 entry_count,   // Entries
+    struct dict_item_s **entries;       // Hash table contents
+    size_t               entry_max,     // Hash table elements
+                         entry_count,   // Entries
                          iterable_max;  // Iterable array bound
     char               **keys;          // Iterable keys
     void               **values;        // Iterable values
@@ -819,15 +819,15 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
         }
 
         // Standard library errors
-		{
-			no_mem:
-			    #ifndef NDEBUG
-			    	printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
-			    #endif
+        {
+            no_mem:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
+                #endif
 
                 // Error
-			    return 0;
-		}
+                return 0;
+        }
     }
 
 }
