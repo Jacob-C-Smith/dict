@@ -248,11 +248,10 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
         #ifndef NDEBUG
             if ( pp_dict == (void *) 0 )
                 goto no_dictionary;
+            if ( keys == (void *) 0 )
+                goto no_keys;
         #endif
 
-        if ( keys == 0 )
-            return 0;
-        
         if ( size == 0 )
             return 0;
     }
@@ -293,12 +292,21 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
         // Argument errors
         {
             no_dictionary:
-            #ifndef NDEBUG
-                printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
-            #endif
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
 
-            // Error 
-            return 0;
+                // Error 
+                return 0;
+
+            no_keys:
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"keys\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+
         }
 
         // Standard library errors
@@ -357,7 +365,7 @@ void *dict_get ( dict *p_dict, char *key )
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"name\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for \"key\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
@@ -562,7 +570,7 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"name\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for \"key\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -595,17 +603,17 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         #endif
     }
 
-
-    // Create a pointer to the head of the list
+    // Initialized data
     unsigned long long  h = mmh64(key, strlen(key));
     dict_item          *i = p_dict->entries[h % p_dict->entry_max];
     dict_item          *k = 0;
-    // Quick sanity check
+
+    // Error check
     if (i == 0)
-        goto no_name;
+        goto no_item;
     
     // Check the head
-    if (strcmp(key, i->key) == 0)
+    if ( strcmp(key, i->key) == 0 )
     {
         dict_item *j = i->next;
         p_dict->entries[h % p_dict->entry_max] = j;
@@ -626,8 +634,6 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
         i = i->next;
     }
-
-
 
     goto no_item;
 
@@ -668,6 +674,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     }
 
     done:
+    
     // Free the pop'd dict_item
     free(k);
 
@@ -704,7 +711,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n\"", __FUNCTION__);
+                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -712,7 +719,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"name\" in call to function \"%s\"\n\"", __FUNCTION__);
+                    printf("[dict] Null pointer provided for \"key\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -955,7 +962,6 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
         }
     }
 }
-
 
 int dict_destroy ( dict  *p_dict )
 {

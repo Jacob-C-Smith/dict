@@ -37,7 +37,7 @@ int main(int argc, const char* argv[])
 	// Copy the dictionary
 	dict_copy(p_dict, &p_dict_copy);
 
-	// Update items "Iguana", "Capybara", and "Brown Bear"
+	// Add "Iguana", "Capybara", and "Brown Bear"
 	dict_add(p_dict, "Iguana", (void *)0x1234);
 	dict_add(p_dict, "Capybara", (void *)0x5678);
 	dict_add(p_dict, "Brown Bear", (void *)0x9ABC);
@@ -64,6 +64,9 @@ int main(int argc, const char* argv[])
 int print_all_keys(dict* p_dict)
 {
 
+	if (p_dict == 0)
+		return 0;
+
 	// Get the dictionarys' keys
 	size_t key_count = dict_keys(p_dict, 0);
 	char** keys = calloc(key_count, sizeof(char*));
@@ -82,5 +85,6 @@ int print_all_keys(dict* p_dict)
 	// Clean up
 	free(keys);
 
+	// Success
 	return 1;
 }
