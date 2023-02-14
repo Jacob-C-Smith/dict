@@ -869,6 +869,9 @@ int dict_clear ( dict  *p_dict )
                 // Iterate
                 di = n;
             }
+            
+            // Prevent double free
+            p_dict->entries[i] = 0;
         }
     }
 
@@ -932,6 +935,9 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
                 // Iterate 
                 di = n;
             }
+            
+            // Prevent double free
+            p_dict->entries[i] = 0;
         }
     }
 
