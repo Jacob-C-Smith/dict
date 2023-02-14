@@ -5,15 +5,15 @@
  >
  > 2 [Build](#build)
  >
- > 2 [Example](#example)
+ > 3 [Example](#example)
  >
- >> 2.1 [Example output](#example-output)
+ >> 3.1 [Example output](#example-output)
  >
- > 3 [Definitions](#definitions)
+ > 4 [Definitions](#definitions)
  >
- >> 3.1 [Type definitions](#type-definitions)
+ >> 4.1 [Type definitions](#type-definitions)
  >>
- >> 3.2 [Function definitions](#function-definitions)
+ >> 4.2 [Function definitions](#function-definitions)
  
  ## Download
  To download dict, execute the following command
