@@ -1,3 +1,8 @@
+/*
+ * @file dict tester
+ * @author Jacob C Smith
+*/
+
 // TODO: Improve documentation
 
 // Include

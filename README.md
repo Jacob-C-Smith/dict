@@ -9,12 +9,14 @@
  >
  >> 3.1 [Example output](#example-output)
  >
- > 4 [Definitions](#definitions)
+ > 4 [Tester](#tester)
  >
- >> 4.1 [Type definitions](#type-definitions)
+ > 5 [Definitions](#definitions)
+ >
+ >> 5.1 [Type definitions](#type-definitions)
  >>
- >> 4.2 [Function definitions](#function-definitions)
- 
+ >> 5.2 [Function definitions](#function-definitions)
+
  ## Download
  To download dict, execute the following command
  ```bash
@@ -33,7 +35,7 @@
  ## Example
  To run the example program, execute this command
  ```
- ./dict_example
+ $ ./dict_example
  ```
  ### Example output
  ```
@@ -53,6 +55,12 @@ Birds
 Fish
  ```
  [Source](main.c)
+## Tester
+ To run the tester program, execute this command after building
+ ```
+ $ ./dict_test
+ ```
+ [Source](dict_test.c)
  ## Definitions
  ### Type definitions
  ```c
@@ -86,3 +94,4 @@ Fish
  // Destructors
  int     dict_destroy    ( dict  *p_dict );
  ```
+
