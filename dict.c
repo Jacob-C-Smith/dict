@@ -25,10 +25,8 @@ unsigned long long mmh64 ( void* k, size_t l )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if (k == (void*)0)
-                goto no_k;
-        #endif
+        if (k == (void*)0)
+            goto no_k;
     }
     
     // Constant data
@@ -95,10 +93,8 @@ int dict_create ( dict **pp_dict )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( pp_dict == (void *) 0 )
-                goto no_dictionary;
-        #endif
+        if ( pp_dict == (void *) 0 )
+            goto no_dictionary;
     }
 
     // Allocate memory for a dictionary
@@ -148,11 +144,8 @@ int dict_construct ( dict **pp_dict, size_t size )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( pp_dict == (void *) 0 )
-                goto no_dictionary;
-        #endif
-        
+        if ( pp_dict == (void *) 0 )
+            goto no_dictionary;
         if (size == 0)
             goto zero_size;
     }
@@ -245,13 +238,10 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( pp_dict == (void *) 0 )
-                goto no_dictionary;
-            if ( keys == (void *) 0 )
-                goto no_keys;
-        #endif
-
+        if ( pp_dict == (void *) 0 )
+            goto no_dictionary;
+        if ( keys == (void *) 0 )
+            goto no_keys;
         if ( size == 0 )
             return 0;
     }
@@ -327,12 +317,10 @@ void *dict_get ( dict *p_dict, char *key )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if( p_dict == (void *) 0 )
-                goto no_dictionary;
-            if( key == (void *) 0 )
-                goto no_name;
-        #endif
+        if( p_dict == (void *) 0 )
+            goto no_dictionary;
+        if( key == (void *) 0 )
+            goto no_name;
     }
 
     // Initialized data
@@ -378,10 +366,8 @@ size_t dict_values ( dict *p_dict, void **values )
 {
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( p_dict == (void *) 0 )
-                goto no_dictioanry;
-        #endif
+        if ( p_dict == (void *) 0 )
+            goto no_dictioanry;
     }
 
     // Initialized data
@@ -421,10 +407,8 @@ size_t dict_keys ( dict *p_dict, char **keys )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( p_dict == (void *) 0 )
-                goto no_dictioanry;
-        #endif
+        if ( p_dict == (void *) 0 )
+            goto no_dictioanry;
     }
 
     // Initialized data
@@ -464,10 +448,8 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if(p_dict == (void *)0)
-                goto no_dictionary;
-        #endif
+        if(p_dict == (void *)0)
+            goto no_dictionary;
 
         if (key == (void *)0)
             goto no_name;
@@ -595,12 +577,10 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if(p_dict == (void *)0)
-                goto no_dictionary;
-            if (key == (void*)0)
-                goto no_name;
-        #endif
+        if (p_dict == (void *)0)
+            goto no_dictionary;
+        if (key == (void*)0)
+            goto no_name;
     }
 
     // Initialized data
@@ -644,7 +624,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
     // Return the value
     if (pp_value)
-        *pp_value = 0; //i->value;
+        *pp_value = k->value;
 
     // Clean up the iterables
     {
@@ -730,7 +710,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         {
             no_item:
                 #ifndef NDEBUG
-                    printf("[Dictionary] Failed to find property from key \"%s\" in call to function \"%s\"\n", key, __FUNCTION__);
+                    printf("[dict] Failed to find property from key \"%s\" in call to function \"%s\"\n", key, __FUNCTION__);
                 #endif
 
                 // Error
@@ -755,12 +735,10 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
     
     // Argument check
     {
-        #ifndef NDEBUG
-            if (p_dict == (void *)0)
-                goto no_dictionary;
-            if (pp_dict == (void*)0)
-                goto no_target;
-        #endif
+        if (p_dict == (void *)0)
+            goto no_dictionary;
+        if (pp_dict == (void*)0)
+            goto no_target;
     }
 
     // Initialized data
@@ -837,11 +815,8 @@ int dict_clear ( dict  *p_dict )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if (p_dict == (void*)0)
-                goto no_dictionary;
-        #endif
-
+        if (p_dict == (void*)0)
+            goto no_dictionary;
         if ( p_dict->entry_count == 0 )
             return 1;
     }
@@ -899,13 +874,11 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( p_dict == (void *) 0 )
-                goto no_dictionary;
-            if ( free_func == (void *) 0 )
-                goto no_free_func;
-        #endif
 
+        if ( p_dict == (void *) 0 )
+            goto no_dictionary;
+        if ( free_func == (void *) 0 )
+            goto no_free_func;
         if ( p_dict->entry_count == 0 )
             return 1;
     }
@@ -974,10 +947,8 @@ int dict_destroy ( dict  *p_dict )
 
     // Argument check
     {
-        #ifndef NDEBUG
-            if ( p_dict == (void *) 0 )
-                goto no_dictionary;
-        #endif
+        if ( p_dict == (void *) 0 )
+            goto no_dictionary;
     }
 
     // Remove all dictionary entries

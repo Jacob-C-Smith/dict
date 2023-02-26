@@ -3,7 +3,7 @@ x64/
 .DS_Store
 # Prerequisites
 *.d
-
+.vscode/
 #CMake
 build/
 CMakeFiles/
