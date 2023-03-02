@@ -64,32 +64,37 @@ int total_tests      = 0,
 // Forward declarations
 int run_tests               ();
 int print_final_summary     ();
-int print_test              ( const char  *scenario_name             , const char  *test_name      , bool       passed );
+int print_test              ( const char  *scenario_name, const char *test_name, bool passed );
 
-bool test_add               ( int        (*dict_constructor)(dict **), char        *key            , void      *value         , result_t   expected );
-bool test_get               ( int        (*dict_constructor)(dict **), char        *key            , void      *expected_value, result_t   expected );
-bool test_key_count         ( int        (*dict_constructor)(dict **), char       **expected_keys  , result_t   expected );
-bool test_value_count       ( int        (*dict_constructor)(dict **), void       **expected_values, result_t   expected );
-bool test_values            ( int        (*dict_constructor)(dict **), void       **expected_values, result_t   expected );
-bool test_keys              ( int        (*dict_constructor)(dict **), char       **expected_keys  , result_t   expected );
-bool test_pop               ( int        (*dict_constructor)(dict **), char        *key            , void      *expected_value, result_t   expected );
+bool test_add               ( int (*dict_constructor)(dict **), char  *key            , void     *value         , result_t expected );
+bool test_get               ( int (*dict_constructor)(dict **), char  *key            , void     *expected_value, result_t expected );
+bool test_key_count         ( int (*dict_constructor)(dict **), char **expected_keys  , result_t  expected );
+bool test_value_count       ( int (*dict_constructor)(dict **), void **expected_values, result_t  expected );
+bool test_values            ( int (*dict_constructor)(dict **), void **expected_values, result_t  expected );
+bool test_keys              ( int (*dict_constructor)(dict **), char **expected_keys  , result_t  expected );
+bool test_pop               ( int (*dict_constructor)(dict **), char  *key            , void     *expected_value, result_t expected );
 
-int test_empty_dict         ( int        (*dict_constructor)(dict **), char        *name );
-int test_one_element_dict   ( int        (*dict_constructor)(dict **), char        *name           , char     **keys          , void     **values );
-int test_two_element_dict   ( int        (*dict_constructor)(dict **), char        *name           , char     **keys          , void     **values );
-int test_three_element_dict ( int        (*dict_constructor)(dict **), char        *name           , char     **keys          , void     **values );
+int test_empty_dict         ( int (*dict_constructor)(dict **), char *name );
+int test_one_element_dict   ( int (*dict_constructor)(dict **), char *name, char **keys, void **values );
+int test_two_element_dict   ( int (*dict_constructor)(dict **), char *name, char **keys, void **values );
+int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char **keys, void **values );
 
-int construct_empty           ( dict       **pp_dict );
-int construct_empty_addA_A    ( dict       **pp_dict );
-int construct_A_popA_empty    ( dict       **pp_dict );
-int construct_A_addB_AB       ( dict       **pp_dict ); 
-int construct_AB_popA_B       ( dict       **pp_dict ); 
-int construct_AB_popB_A       ( dict       **pp_dict ); 
-int construct_AB_addC_ABC     ( dict       **pp_dict );
-int construct_ABC_popA_BC     ( dict       **pp_dict );
-int construct_ABC_popB_AC     ( dict       **pp_dict );
-int construct_ABC_popC_AB     ( dict       **pp_dict );
-int construct_ABC_clear_empty ( dict       **pp_dict );
+int construct_empty                 ( dict **pp_dict );
+int construct_empty_addA_A          ( dict **pp_dict );
+int construct_A_popA_empty          ( dict **pp_dict );
+int construct_A_addB_AB             ( dict **pp_dict ); 
+int construct_AB_popA_B             ( dict **pp_dict ); 
+int construct_AB_popB_A             ( dict **pp_dict ); 
+int construct_AB_addC_ABC           ( dict **pp_dict );
+int construct_ABC_popA_BC           ( dict **pp_dict );
+int construct_ABC_popB_AC           ( dict **pp_dict );
+int construct_ABC_popC_AB           ( dict **pp_dict );
+int construct_ABC_clear_empty       ( dict **pp_dict );
+int construct_AB_clear_empty        ( dict **pp_dict );
+int construct_A_clear_empty         ( dict **pp_dict );
+int construct_empty_fromkeysABC_ABC ( dict **pp_dict );
+int construct_empty_fromkeysAB_AB   ( dict **pp_dict );
+int construct_empty_fromkeysA_A     ( dict **pp_dict );
 
 // Entry point
 int main(int argc, const char* argv[])
@@ -137,6 +142,12 @@ int run_tests()
 
     // [A,B,C] -> clear() -> []
     test_empty_dict(construct_ABC_clear_empty, "ABC_clear_empty");
+
+    // [A,B] -> clear() -> []
+    test_empty_dict(construct_AB_clear_empty, "AB_clear_empty");
+
+    // [A] -> clear() -> []
+    test_empty_dict(construct_A_clear_empty, "A_clear_empty");
 
     // Success
     return 1;
@@ -277,6 +288,32 @@ int construct_ABC_clear_empty ( dict **pp_dict )
 
     // Construct an [A, B, C] dict
     construct_AB_addC_ABC(pp_dict);
+
+    // clear()
+    dict_clear(*pp_dict);
+
+    // dict = []
+    // Success
+    return 1;
+}
+
+int construct_AB_clear_empty ( dict **pp_dict )
+{
+    // Construct an [A, B] dict
+    construct_A_addB_AB(pp_dict);
+
+    // clear()
+    dict_clear(*pp_dict);
+
+    // dict = []
+    // Success
+    return 1;
+}
+
+int construct_A_clear_empty ( dict **pp_dict )
+{
+    // Construct an [A] dict
+    construct_empty_addA_A(pp_dict);
 
     // clear()
     dict_clear(*pp_dict);
