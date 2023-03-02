@@ -36,7 +36,7 @@ typedef struct dict_s dict;
  *
  * @param pp_dict return
  *
- * @sa destroy_dict
+ * @sa dict_destroy
  *
  * @return 1 on success, 0 on error
  */
@@ -50,7 +50,7 @@ DLLEXPORT int dict_create ( dict **pp_dict );
  * @param size     number of hash table entries. 
  *
  * @sa dict_create
- * @sa destroy_dict
+ * @sa dict_destroy
  *
  * @return 1 on success, 0 on error
  */
@@ -64,7 +64,7 @@ DLLEXPORT int dict_construct ( dict **pp_dict, size_t size );
  * @param size    number of hash table entries. 
  *
  * @sa dict_create
- * @sa destroy_dict
+ * @sa dict_destroy
  *
  * @return 1 on success, 0 on error
  */
