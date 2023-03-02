@@ -5,6 +5,7 @@ x64/
 *.d
 dict_test
 .vscode/
+dict_python_bindings
 #CMake
 build/
 CMakeFiles/

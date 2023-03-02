@@ -92,6 +92,6 @@ Fish
  int     dict_free_clear ( dict  *p_dict, void       (*free_func) (void *) );
 
  // Destructors
- int     dict_destroy    ( dict  *p_dict );
+ int     dict_destroy    ( dict **pp_dict );
  ```
 

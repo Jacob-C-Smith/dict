@@ -179,10 +179,10 @@ DLLEXPORT int dict_free_clear ( dict *p_dict, void (*free_func)(void *) );
 /** !
  *  Destroy and deallocate a dictionary
  *
- * @param p_dict dictionary
+ * @param pp_dict dictionary
  *
  * @sa dict_create
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_destroy ( dict *p_dict );
+DLLEXPORT int dict_destroy ( dict **pp_dict );

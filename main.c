@@ -13,7 +13,7 @@ int main(int argc, const char* argv[])
 {
 
     // Initialized data
-    char    *keys[]       = { "Dogs", "Cats", "Birds", "Fish", (void*)0 };
+    char     *keys[]      = { "Dogs", "Cats", "Birds", "Fish", (void*)0 };
     dict     *p_dict      = (void *) 0;
     dict     *p_dict_copy = (void *) 0;
 
@@ -29,7 +29,7 @@ int main(int argc, const char* argv[])
     print_all_keys(p_dict);
 
     // Destroy the dictionary
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Create a dictionary from provided keys 
     dict_from_keys(&p_dict, keys, 10);
@@ -53,8 +53,8 @@ int main(int argc, const char* argv[])
     print_all_keys(p_dict_copy);
 
     // Destroy the dictionaries
-    dict_destroy(p_dict);
-    dict_destroy(p_dict_copy);
+    dict_destroy(&p_dict);
+    dict_destroy(&p_dict_copy);
 
     // Success
     return EXIT_SUCCESS;

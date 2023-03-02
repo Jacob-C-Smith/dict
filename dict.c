@@ -1,5 +1,20 @@
 ﻿#include <dict/dict.h>
 
+// Platform dependent includes
+#ifdef _WIN64
+#include <windows.h>
+#include <process.h>
+#else
+#include <pthread.h>
+#endif
+
+// Platform dependent macros
+#ifdef _WIN64
+#define mutex_t HANDLE
+#else
+#define mutex_t pthread_mutex_t
+#endif
+
 struct dict_item_s
 {
     char               *key;   // The key
@@ -14,11 +29,60 @@ struct dict_s {
     size_t               entry_max,     // Hash table elements
                          entry_count,   // Entries
                          iterable_max;  // Iterable array bound
+    mutex_t              lock;          // Locked when writing values
     char               **keys;          // Iterable keys
     void               **values;        // Iterable values
 };
 
 typedef struct dict_item_s dict_item;
+
+
+int create_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        *p_mutex = CreateMutex(0, FALSE, 0);
+        return ( *p_mutex );
+    #else
+        return ( pthread_mutex_init(p_mutex, NULL) == 0 );
+    #endif
+
+    return 0;
+}
+
+int lock_mutex   ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        *p_mutex = ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
+        return ( *p_mutex );
+    #else
+        return ( pthread_mutex_destroy(p_mutex) == 0 );
+    #endif
+
+    return 0;
+}
+
+int unlock_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        return ReleaseMutex(*p_mutex);
+    #else
+        return ( pthread_mutex_unlock( p_mutex ) == 0 );
+    #endif
+
+    return 0;
+}
+
+int destroy_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        *p_mutex = CloseHandle(0, FALSE, 0);
+        return (*mutex);
+    #else
+        return ( pthread_mutex_destroy(p_mutex) == 0 );
+    #endif
+
+    return 0;
+}
 
 unsigned long long mmh64 ( void* k, size_t l )
 {
@@ -171,6 +235,9 @@ int dict_construct ( dict **pp_dict, size_t size )
     p_dict->keys         = calloc(1, sizeof(char *));
     p_dict->values       = calloc(1, sizeof(void *));
 
+    // Create a mutex
+    create_mutex(&p_dict->lock);
+
     // Error checking
     {
         if ( p_dict->entries == (void *) 0 )
@@ -247,23 +314,13 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
     }
 
     // Initialized data
-    dict* p_dict = 0;
+    dict *p_dict = 0;
 
-    // Allocation failed
-    if ( dict_construct(pp_dict, size) == 0 )
+    // Allocate a dictionary
+    if ( dict_construct(&p_dict, size) == 0 )
+
+        // Allocation failed
         return 0;
-    
-    p_dict = *pp_dict;
-
-    // Set the count and allocate for entries
-    p_dict->entry_max = size;
-    p_dict->entries   = calloc(size, sizeof(dict_item *));
-
-    // Error checking
-    {
-        if (p_dict->entries == (void*)0)
-            goto no_mem;
-    }
 
     // Iterate over each key
     for (size_t i = 0; keys[i]; i++)
@@ -272,6 +329,9 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
         // Add the key to the dictionary
         dict_add(p_dict, keys[i], (void *)0);
     }
+
+    // Return
+    *pp_dict = p_dict;
 
     // Success
     return 1;
@@ -323,20 +383,32 @@ void *dict_get ( dict *p_dict, char *key )
             goto no_name;
     }
 
+    // Lock
+    lock_mutex(&p_dict->lock);
+
     // Initialized data
     dict_item *ret = p_dict->entries[mmh64(key, strlen(key)) % p_dict->entry_max];
-    
-    // Iterate over each item in the linked list
-    for (; ret != 0; ret = ret->next)
+    void      *val = 0;
+
+    // Walk the  list
+    while(ret != 0)
     {
 
-        // Is it the right entry?
+        // Is this the right entry?
         if ( strcmp(key, ret->key) == 0 )
             break;
+
+        // Iterate
+        ret = ret->next;
     }
 
+    val = (ret) ? ret->value : (void *)0;
+
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+
     // Return the value if it exists, otherwise null pointer
-    return (ret) ? (void *)ret->value : 0;
+    return val;
 
     // Error handling
     {
@@ -370,6 +442,9 @@ size_t dict_values ( dict *p_dict, void **values )
             goto no_dictioanry;
     }
 
+    // Lock
+    lock_mutex(&p_dict->lock);
+
     // Initialized data
     size_t entry_count = p_dict->entry_count;
 
@@ -381,6 +456,9 @@ size_t dict_values ( dict *p_dict, void **values )
 
     // Copy memory
     memcpy(values, p_dict->values, entry_count * sizeof(void *));
+    
+    // Unlock
+    unlock_mutex(&p_dict->lock);
 
     // Success
     return 1;
@@ -411,6 +489,9 @@ size_t dict_keys ( dict *p_dict, char **keys )
             goto no_dictioanry;
     }
 
+    // Lock
+    lock_mutex(&p_dict->lock);
+
     // Initialized data
     size_t entry_count = p_dict->entry_count;
 
@@ -422,6 +503,9 @@ size_t dict_keys ( dict *p_dict, char **keys )
 
     // Copy memory
     memcpy(keys, p_dict->keys, entry_count * sizeof(void *));
+
+    // Unlock
+    unlock_mutex(&p_dict->lock);
 
     // Success
     return 1;
@@ -454,6 +538,9 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
         if (key == (void *)0)
             goto no_name;
     }
+
+    // Lock
+    lock_mutex(&p_dict->lock);
 
     // Initialized data
     unsigned long long  h        = mmh64((void *)key, strlen(key));
@@ -534,6 +621,9 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
         p_dict->values[property->index] = property->value;
     }
 
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+
     // Success
     return 1;
 
@@ -566,6 +656,9 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
                     printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
+                // Unlock
+                unlock_mutex(&p_dict->lock);
+
                 // Error
                 return 0;
         }
@@ -583,6 +676,9 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
             goto no_name;
     }
 
+    // Lock
+    lock_mutex(&p_dict->lock);
+
     // Initialized data
     unsigned long long  h = mmh64(key, strlen(key));
     dict_item          *i = p_dict->entries[h % p_dict->entry_max];
@@ -591,7 +687,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     // Error check
     if (i == 0)
         goto no_item;
-    
+
     // Check the head
     if ( strcmp(key, i->key) == 0 )
     {
@@ -681,6 +777,9 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         }
     }
 
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+    
     // Success
     return 1;
 
@@ -713,6 +812,9 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
                     printf("[dict] Failed to find property from key \"%s\" in call to function \"%s\"\n", key, __FUNCTION__);
                 #endif
 
+                // Unlock
+                unlock_mutex(&p_dict->lock);
+                
                 // Error
                 return 0;
         }
@@ -723,6 +825,9 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
                 #ifndef NDEBUG
                     printf("[Standard library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
+
+                // Unlock
+                unlock_mutex(&p_dict->lock);
 
                 // Error
                 return 0;
@@ -740,6 +845,9 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
         if (pp_dict == (void*)0)
             goto no_target;
     }
+
+    // Lock
+    lock_mutex(&p_dict->lock);
 
     // Initialized data
     char **keys   = calloc(p_dict->entry_count + 1, sizeof(char*));
@@ -772,6 +880,9 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
     free(keys);
     free(values);
 
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+
     // Success
     return 1;
 
@@ -802,7 +913,10 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
                 #ifndef NDEBUG
                     printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
                 #endif
-
+                
+                // Unlock
+                unlock_mutex(&p_dict->lock);
+                
                 // Error
                 return 0;
         }
@@ -820,6 +934,9 @@ int dict_clear ( dict  *p_dict )
         if ( p_dict->entry_count == 0 )
             return 1;
     }
+
+    // Lock
+    lock_mutex(&p_dict->lock);
 
     // Iterate over each hash table item
     for (size_t i = 0; i < p_dict->entry_max; i++)
@@ -849,6 +966,22 @@ int dict_clear ( dict  *p_dict )
             p_dict->entries[i] = 0;
         }
     }
+
+    if (p_dict->keys==0 && p_dict->values==0)
+        goto done;
+
+    // Clear iterables
+    for (size_t i = 0; i < p_dict->entry_count; i++)
+    {
+        p_dict->keys[i]   = 0;
+        p_dict->values[i] = 0;
+    }
+    
+    p_dict->entry_count = 0;
+
+    done:
+    // Unlock
+    unlock_mutex(&p_dict->lock);
 
     // Success
     return 1;
@@ -883,6 +1016,9 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
             return 1;
     }
 
+    // Lock
+    lock_mutex(&p_dict->lock);
+
     // Iterate over each hash table item
     for (size_t i = 0; i < p_dict->entry_max; i++)
     {
@@ -914,6 +1050,9 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
         }
     }
 
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+
     // Success
     return 1;
 
@@ -942,24 +1081,39 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
     }
 }
 
-int dict_destroy ( dict  *p_dict )
+int dict_destroy ( dict  **pp_dict )
 {
 
     // Argument check
     {
-        if ( p_dict == (void *) 0 )
+        if ( pp_dict == (void *) 0 )
             goto no_dictionary;
     }
 
-    // Remove all dictionary entries
+    // Initialized data
+    dict *p_dict = *pp_dict;
+
+    // Lock
+    lock_mutex(&p_dict->lock);
+
+    // No more pointer for end user
+    *pp_dict = (dict *) 0;
+
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+
+    // Remove all the dictionary properties
     dict_clear(p_dict);
     
-    // Free the table
+    // Free the hash table
     free(p_dict->entries);
 
     // Free the iterables
     free(p_dict->keys);
     free(p_dict->values);
+
+    // Destroy the mutex
+    destroy_mutex(&p_dict->lock);
 
     // Free the dictionary
     free(p_dict);
@@ -971,7 +1125,7 @@ int dict_destroy ( dict  *p_dict )
     {
         no_dictionary:
             #ifndef NDEBUG
-                printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
             #endif
 
             // Error

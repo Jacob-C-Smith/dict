@@ -27,6 +27,8 @@ char *A_key   = "A",
      *X_key   = "X";
 
 // Expected results
+char  *_keys     [] = { 0x0 };
+void  *_values   [] = { (void *) 0x0 };
 char  *A_keys    [] = { "A", 0x0 };
 void  *A_values  [] = { (void *) 0x1, (void *) 0x0 };
 char  *B_keys    [] = { "B", 0x0 };
@@ -77,16 +79,17 @@ int test_one_element_dict   ( int        (*dict_constructor)(dict **), char     
 int test_two_element_dict   ( int        (*dict_constructor)(dict **), char        *name           , char     **keys          , void     **values );
 int test_three_element_dict ( int        (*dict_constructor)(dict **), char        *name           , char     **keys          , void     **values );
 
-int construct_empty        ( dict       **pp_dict );
-int construct_empty_addA_A ( dict       **pp_dict );
-int construct_A_popA_empty ( dict       **pp_dict );
-int construct_A_addB_AB    ( dict       **pp_dict ); 
-int construct_AB_popA_B    ( dict       **pp_dict ); 
-int construct_AB_popB_A    ( dict       **pp_dict ); 
-int construct_AB_addC_ABC  ( dict       **pp_dict );
-int construct_ABC_popA_BC  ( dict       **pp_dict );
-int construct_ABC_popB_AC  ( dict       **pp_dict );
-int construct_ABC_popC_AB  ( dict       **pp_dict );
+int construct_empty           ( dict       **pp_dict );
+int construct_empty_addA_A    ( dict       **pp_dict );
+int construct_A_popA_empty    ( dict       **pp_dict );
+int construct_A_addB_AB       ( dict       **pp_dict ); 
+int construct_AB_popA_B       ( dict       **pp_dict ); 
+int construct_AB_popB_A       ( dict       **pp_dict ); 
+int construct_AB_addC_ABC     ( dict       **pp_dict );
+int construct_ABC_popA_BC     ( dict       **pp_dict );
+int construct_ABC_popB_AC     ( dict       **pp_dict );
+int construct_ABC_popC_AB     ( dict       **pp_dict );
+int construct_ABC_clear_empty ( dict       **pp_dict );
 
 // Entry point
 int main(int argc, const char* argv[])
@@ -131,6 +134,9 @@ int run_tests()
 
     // [A,B,C] -> pop(C) -> [A,B]
     test_two_element_dict(construct_ABC_popC_AB, "ABC_popC_AB", (char **)AB_keys, (void **) AB_values);
+
+    // [A,B,C] -> clear() -> []
+    test_empty_dict(construct_ABC_clear_empty, "ABC_clear_empty");
 
     // Success
     return 1;
@@ -262,6 +268,20 @@ int construct_ABC_popC_AB  ( dict **pp_dict )
     dict_pop(*pp_dict, C_key, 0);
 
     // dict = [A, B]
+    // Success
+    return 1;
+}
+
+int construct_ABC_clear_empty ( dict **pp_dict )
+{
+
+    // Construct an [A, B, C] dict
+    construct_AB_addC_ABC(pp_dict);
+
+    // clear()
+    dict_clear(*pp_dict);
+
+    // dict = []
     // Success
     return 1;
 }
@@ -480,7 +500,7 @@ bool test_add ( int(*dict_constructor)(dict **pp_dict), char *key, void *value, 
     result = dict_add(p_dict, key, value);
 
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (result == expected);
@@ -506,7 +526,7 @@ bool test_get ( int(*dict_constructor)(dict **pp_dict), char *key, void *expecte
         result = zero;
 
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (result == expected);
@@ -534,7 +554,7 @@ bool test_key_count ( int(*dict_constructor)(dict **pp_dict), char **expected_ke
     keys_count = dict_keys(p_dict, 0);
 
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (expected_keys_count == keys_count) ? true : false;
@@ -562,7 +582,7 @@ bool test_value_count ( int(*dict_constructor)(dict **pp_dict), void **expected_
     value_count = dict_values(p_dict, 0);
 
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (expected_value_count == value_count) ? true : false;
@@ -622,7 +642,7 @@ bool test_keys ( int(*dict_constructor)(dict **pp_dict), char **expected_keys, r
     free(keys);
 
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (result == expected);    
@@ -685,7 +705,7 @@ bool test_values ( int(*dict_constructor)(dict **pp_dict), void **expected_value
 
     exit:
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (result == expected);
@@ -711,7 +731,7 @@ bool test_pop ( int (*dict_constructor)(dict **), char *key , void *expected_val
         result = zero;
 
     // Free the dict
-    dict_destroy(p_dict);
+    dict_destroy(&p_dict);
 
     // Return result
     return (result == expected);
