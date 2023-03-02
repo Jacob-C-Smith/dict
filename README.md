@@ -29,7 +29,7 @@
  $ cmake .
  $ make
  ```
-  This will build the example program, and dynamic / shared libraries
+  This will build the example program, the tester program, and dynamic / shared libraries
 
   To build dict for Windows machines, open the base directory in Visual Studio, and build your desired target(s)
  ## Example
