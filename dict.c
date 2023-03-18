@@ -234,7 +234,8 @@ int dict_construct ( dict **pp_dict, size_t size )
     p_dict->values       = calloc(1, sizeof(void *));
 
     // Create a mutex
-    create_mutex(&p_dict->lock);
+    if ( create_mutex(&p_dict->lock) == 0 )
+        goto failed_to_create_mutex;
 
     // Error checking
     {
@@ -279,6 +280,14 @@ int dict_construct ( dict **pp_dict, size_t size )
             failed_to_create_dict:
                 #ifndef NDEBUG
                     printf("[dict] Failed to create dictionary in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error 
+                return 0;
+            
+            failed_to_create_mutex:
+                #ifndef NDEBUG
+                    printf("[dict] Failed to create mutex in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error 
