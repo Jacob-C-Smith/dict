@@ -41,7 +41,7 @@ int create_mutex ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
         *p_mutex = CreateMutex(0, FALSE, 0);
-        return ( *p_mutex );
+        return ( p_mutex != 0 );
     #else
         return ( pthread_mutex_init(p_mutex, NULL) == 0 );
     #endif
@@ -52,10 +52,9 @@ int create_mutex ( mutex_t *p_mutex )
 int lock_mutex   ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
-        *p_mutex = ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
-        return ( *p_mutex );
+        return ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
     #else
-        return ( pthread_mutex_destroy(p_mutex) == 0 );
+        return ( pthread_mutex_lock(p_mutex) == 0 );
     #endif
 
     return 0;
@@ -75,8 +74,7 @@ int unlock_mutex ( mutex_t *p_mutex )
 int destroy_mutex ( mutex_t *p_mutex )
 {
     #ifdef _WIN64
-        *p_mutex = CloseHandle(0, FALSE, 0);
-        return (*mutex);
+        return ( CloseHandle(*p_mutex) );
     #else
         return ( pthread_mutex_destroy(p_mutex) == 0 );
     #endif
@@ -357,17 +355,6 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
                 // Error 
                 return 0;
 
-        }
-
-        // Standard library errors
-        {
-            no_mem:
-            #ifndef NDEBUG
-                printf("[Standard Library] Failed to allocate memory in call to function \"%s\"\n", __FUNCTION__);
-            #endif
-
-            // Error 
-            return 0;
         }
     }
 }
