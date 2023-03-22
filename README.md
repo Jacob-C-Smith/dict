@@ -63,6 +63,8 @@ Fish
  $ ./dict_test
  ```
  [Source](dict_test.c)
+ 
+ [Tester output](test_output.txt)
  ## Definitions
  ### Type definitions
  ```c
