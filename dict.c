@@ -447,7 +447,13 @@ size_t dict_values ( dict *p_dict, void **values )
     // Error check
     {
         if (values == 0)
+        {
+            
+            // Unlock
+            unlock_mutex(&p_dict->lock);
+            
             return entry_count;
+        }
     }
 
     // Copy memory
@@ -494,7 +500,13 @@ size_t dict_keys ( dict *p_dict, char **keys )
     // Error check
     {
         if (keys == 0)
+        {
+            
+            // Unlock
+            unlock_mutex(&p_dict->lock);
+
             return entry_count;
+        }
     }
 
     // Copy memory
