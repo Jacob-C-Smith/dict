@@ -137,6 +137,17 @@ DLLEXPORT int dict_add ( dict *p_dict, const char *key, void *p_value );
  */
 DLLEXPORT int dict_pop ( dict *p_dict, char *key, void **pp_value );
 
+// Iterators
+/** !
+ *  Call a function on each value in a dictionary
+ * 
+ * @param p_dict dictionary
+ * @param function the function to call. 
+ * 
+ * @return 1 on success, 0 on error
+*/
+DLLEXPORT int dict_foreach ( dict *p_dict, void (*function)(void *) );
+
 // Shallow copy
 /** !
  *  Make a shallow copy of a dictionary

@@ -843,6 +843,58 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     }
 }
 
+int dict_foreach ( dict *p_dict, void (*function)(void *) )
+{
+
+    // Argument check
+    {
+
+        if ( p_dict == (void *) 0 )
+            goto no_dictionary;
+        if ( function == (void *) 0 )
+            goto no_function;
+        if ( p_dict->entry_count == 0 )
+            return 1;
+    }
+
+    // Lock
+    lock_mutex(&p_dict->lock);
+
+    // Iterate over each hash table item
+    for (size_t i = 0; i < p_dict->entry_count; i++)
+        function(p_dict->values[i]);
+
+    // Unlock
+    unlock_mutex(&p_dict->lock);
+
+    // Success
+    return 1;
+
+    // Error handling
+    {
+
+        // Argument errors
+        {
+            no_dictionary:
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+                
+                // Error
+                return 0;
+
+            no_function:
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"function\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+                
+                // Error
+                return 0;
+            
+        }
+    }
+}
+
 int dict_copy ( dict  *p_dict, dict** pp_dict )
 {
     
@@ -853,9 +905,6 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
         if (pp_dict == (void*)0)
             goto no_target;
     }
-
-    // Lock
-    lock_mutex(&p_dict->lock);
 
     // Initialized data
     char **keys   = calloc(p_dict->entry_count + 1, sizeof(char*));
@@ -887,9 +936,6 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
     // Free the lists
     free(keys);
     free(values);
-
-    // Unlock
-    unlock_mutex(&p_dict->lock);
 
     // Success
     return 1;

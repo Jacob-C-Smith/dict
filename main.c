@@ -6,7 +6,8 @@
 #include <dict/dict.h>
 
 // Forward declaration
-int print_all_keys(dict* d);
+int  print_all_keys         ( dict *d );
+void print_value_as_integer ( void *value );
 
 // Entry point
 int main(int argc, const char* argv[])
@@ -50,7 +51,10 @@ int main(int argc, const char* argv[])
     print_all_keys(p_dict);
 
     // Print the dictionary that was constructed from the keys
-    print_all_keys(p_dict_copy);
+    print_all_keys(p_dict);
+
+    // Print each value as a hexidecimal number
+    dict_foreach(p_dict, &print_value_as_integer);
 
     // Destroy the dictionaries
     dict_destroy(&p_dict);
@@ -87,4 +91,14 @@ int print_all_keys(dict* p_dict)
 
     // Success
     return 1;
+}
+
+void print_value_as_integer(void *value)
+{
+
+    // Print the value as a hexidecimal number
+    printf("0x%zx\n",(size_t) value);
+
+    // Return
+    return;
 }
