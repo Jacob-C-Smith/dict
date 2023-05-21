@@ -1,4 +1,12 @@
-﻿#include <dict/dict.h>
+/** !
+ * dict library
+ * 
+ * @file dict.c 
+ * 
+ * @author Jacob Smith
+ */
+
+#include <dict/dict.h>
 
 // Platform dependent includes
 #ifdef _WIN64
