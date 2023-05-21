@@ -1,7 +1,7 @@
 # dict
 [![CMake](https://github.com/Jacob-C-Smith/dict/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/dict/actions/workflows/cmake.yml)
  
- A minimal dictionary implementation written in C. 
+ A minimal, thread-safe dictionary implementation written in C. 
  
  > 1 [Download](#download)
  >
