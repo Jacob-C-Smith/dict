@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.0)
 
 include(FeatureSummary)
 set_package_properties(DICT PROPERTIES
-    URL "https://www.libsdl.org/"
-    DESCRIPTION "low level access to audio, keyboard, mouse, joystick, and graphics hardware"
+    URL "https://www.g10.app/ADT/dict"
+    DESCRIPTION "dictionary ADT"
 )
 
 # Copied from `configure_package_config_file`
@@ -39,17 +39,17 @@ set(DICT_INCLUDE_DIRS           "${DICT_INCLUDE_DIR}")
 set_and_check(DICT_BINDIR       "${CMAKE_CURRENT_LIST_DIR}/../build/Debug/")
 set_and_check(DICT_LIBDIR       "${CMAKE_CURRENT_LIST_DIR}/../build/Debug/")
 
-set(DICT_LIBRARIES DICT::DICT)
+set(DICT_LIBRARIES dict::dict)
 
 # All targets are created, even when some might not be requested though COMPONENTS.
 # This is done for compatibility with CMake generated DICT-target.cmake files.
 
-set(_DICT_library     "${DICT_LIBDIR}/DICT.lib")
-set(_DICT_dll_library "${DICT_BINDIR}/DICT.dll")
+set(_DICT_library     "${DICT_LIBDIR}/dict.lib")
+set(_DICT_dll_library "${DICT_BINDIR}/dict.dll")
 if(EXISTS "${_DICT_library}" AND EXISTS "${_DICT_dll_library}")
-    if(NOT TARGET DICT::DICT)
-        add_library(DICT::DICT SHARED IMPORTED)
-        set_target_properties(DICT::DICT
+    if(NOT TARGET dict::dict)
+        add_library(dict::dict SHARED IMPORTED)
+        set_target_properties(dict::dict
             PROPERTIES
                 INTERFACE_INCLUDE_DIRECTORIES "${DICT_INCLUDE_DIRS}"
                 IMPORTED_IMPLIB "${_DICT_library}"
