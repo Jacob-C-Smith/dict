@@ -1,5 +1,7 @@
 .vs/
 x64/
+desktop.ini
+dict.ico
 .DS_Store
 # Prerequisites
 *.d
