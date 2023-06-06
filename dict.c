@@ -1150,6 +1150,8 @@ int dict_destroy ( dict  **pp_dict )
     {
         if ( pp_dict == (void *) 0 )
             goto no_dictionary;
+        if ( *pp_dict == (void *) 0 )
+            goto pp_dict_null;
     }
 
     // Initialized data
@@ -1192,5 +1194,14 @@ int dict_destroy ( dict  **pp_dict )
 
             // Error
             return 0;
+
+        pp_dict_null:
+            #ifndef NDEBUG
+                printf("[dict] Parameter \"pp_dict\" points to null pointer in call to function \"%s\"\n", __FUNCTION__);
+            #endif
+
+            // Error
+            return 0;
+            
     }
 }
