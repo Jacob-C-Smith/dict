@@ -10,15 +10,15 @@ if (${IS_DEBUG_BUILD})
 endif()
 
 # Add source to this project's executable.
-add_executable(dict_example)
-target_include_directories(dict_example PUBLIC "include")
-target_sources(dict_example PRIVATE  "dict.c" "main.c")
+add_executable(dict_example "main.c")
+target_include_directories(dict_example PUBLIC include)
+target_link_libraries(dict_example PUBLIC dict)
 
 # Add source to the tester
-add_executable (dict_test)
-target_include_directories(dict_test PUBLIC "include")
-target_sources(dict_test PRIVATE "dict.c" "dict_test.c")
+add_executable (dict_test "dict_test.c")
+target_include_directories(dict_test PUBLIC include)
+target_link_libraries(dict_test PUBLIC dict)
 
 # Add source to the library
-add_library(dict SHARED "dict.c")
-target_include_directories(dict PUBLIC "include")
+add_library(dict "dict.c")
+target_include_directories(dict PUBLIC include)
