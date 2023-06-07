@@ -8,6 +8,9 @@
 
 #include <dict/dict.h>
 
+#ifndef GMUTEX
+#define GMUTEX
+
 // Platform dependent includes
 #ifdef _WIN64
 #include <windows.h>
@@ -21,6 +24,53 @@
 #define mutex_t HANDLE
 #else
 #define mutex_t pthread_mutex_t
+#endif
+
+// Mutex operations
+static inline int create_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        *p_mutex = CreateMutex(0, FALSE, 0);
+        return ( p_mutex != 0 );
+    #else
+        return ( pthread_mutex_init(p_mutex, NULL) == 0 );
+    #endif
+
+    return 0;
+}
+
+static inline int lock_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        return ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
+    #else
+        return ( pthread_mutex_lock(p_mutex) == 0 );
+    #endif
+
+    return 0;
+}
+
+static inline int unlock_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        return ReleaseMutex(*p_mutex);
+    #else
+        return ( pthread_mutex_unlock( p_mutex ) == 0 );
+    #endif
+
+    return 0;
+}
+
+static inline int destroy_mutex ( mutex_t *p_mutex )
+{
+    #ifdef _WIN64
+        return ( CloseHandle(*p_mutex) );
+    #else
+        return ( pthread_mutex_destroy(p_mutex) == 0 );
+    #endif
+
+    return 0;
+}
 #endif
 
 struct dict_item_s
@@ -43,52 +93,6 @@ struct dict_s {
 };
 
 typedef struct dict_item_s dict_item;
-
-
-int create_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        *p_mutex = CreateMutex(0, FALSE, 0);
-        return ( p_mutex != 0 );
-    #else
-        return ( pthread_mutex_init(p_mutex, NULL) == 0 );
-    #endif
-
-    return 0;
-}
-
-int lock_mutex   ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        return ( WaitForSingleObject(*p_mutex, INFINITE) == WAIT_FAILED ? 0 : 1 );
-    #else
-        return ( pthread_mutex_lock(p_mutex) == 0 );
-    #endif
-
-    return 0;
-}
-
-int unlock_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        return ReleaseMutex(*p_mutex);
-    #else
-        return ( pthread_mutex_unlock( p_mutex ) == 0 );
-    #endif
-
-    return 0;
-}
-
-int destroy_mutex ( mutex_t *p_mutex )
-{
-    #ifdef _WIN64
-        return ( CloseHandle(*p_mutex) );
-    #else
-        return ( pthread_mutex_destroy(p_mutex) == 0 );
-    #endif
-
-    return 0;
-}
 
 unsigned long long mmh64 ( void* k, size_t l )
 {

@@ -1,4 +1,4 @@
-﻿cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required (VERSION 3.26.0)
 
 project ("dict")
 
@@ -20,5 +20,5 @@ target_include_directories(dict_test PUBLIC include)
 target_link_libraries(dict_test PUBLIC dict)
 
 # Add source to the library
-add_library(dict "dict.c")
-target_include_directories(dict PUBLIC include)
+add_library(dict STATIC "dict.c")
+target_include_directories(dict PUBLIC include include/dict)
