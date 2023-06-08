@@ -4,7 +4,10 @@ project ("dict")
 
 # Comment out for Debug mode
 set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
-set(HAS_DICT true)
+if ( NOT "${HAS_DICT}")
+    message("[dict] Adding dict project")
+    set(HAS_DICT true PARENT_SCOPE)
+endif()
 
 if (${IS_DEBUG_BUILD})
     add_compile_definitions(NDEBUG)
