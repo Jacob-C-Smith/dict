@@ -612,7 +612,7 @@ bool test_value_count ( int(*dict_constructor)(dict **pp_dict), void **expected_
     dict_constructor(&p_dict);
 
     // Count the values
-    if(expected_values)
+    if ( expected_values)
         while(expected_values[++expected_value_count]);
 
     // Get a key 
@@ -639,7 +639,7 @@ bool test_keys ( int(*dict_constructor)(dict **pp_dict), char **expected_keys, r
     dict_constructor(&p_dict);
 
     // Count the key
-    if(expected_keys)
+    if ( expected_keys)
     {
         while(expected_keys[++expected_key_count]);
     }
@@ -700,7 +700,7 @@ bool test_values ( int(*dict_constructor)(dict **pp_dict), void **expected_value
     dict_constructor(&p_dict);
 
     // Count the values
-    if(expected_values)
+    if ( expected_values)
     {
         while(expected_values[++expected_value_count]);
     }

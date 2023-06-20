@@ -176,7 +176,7 @@ int dict_create ( dict **pp_dict )
 
     // Error checking
     {
-        if( p_dict == (void *) 0 )
+        if ( p_dict == (void *) 0 )
             goto no_mem;
     }
 
@@ -385,9 +385,9 @@ void *dict_get ( dict *p_dict, char *key )
 
     // Argument check
     {
-        if( p_dict == (void *) 0 )
+        if ( p_dict == (void *) 0 )
             goto no_dictionary;
-        if( key == (void *) 0 )
+        if ( key == (void *) 0 )
             goto no_name;
     }
 
@@ -552,11 +552,8 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
 
     // Argument check
     {
-        if(p_dict == (void *)0)
-            goto no_dictionary;
-
-        if (key == (void *)0)
-            goto no_name;
+        if ( p_dict == (void *) 0 ) goto no_dictionary;
+        if ( key    == (void *) 0 ) goto no_name;
     }
 
     // Lock
@@ -587,10 +584,8 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
         property = (dict_item*) calloc(1, sizeof(dict_item));
 
         // Error checking
-        {
-            if(property == (void *)0)
-                goto no_mem;
-        }
+        if ( property == (void *) 0 )
+            goto no_mem;
 
         // Set the property
         property->key = (char *) key;
@@ -924,9 +919,9 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
 
     // Error checking
     {
-        if(keys == (void *)0)
+        if ( keys == (void *) 0 )
             goto no_mem;
-        if (values == (void*)0)
+        if ( values == (void *) 0 )
             goto no_mem;
     }
 
