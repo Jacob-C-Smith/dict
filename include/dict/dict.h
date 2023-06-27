@@ -9,7 +9,7 @@
 // Include guard
 #pragma once
 
-
+#undef NDEBUG
 
 // Standard library
 #include <stdio.h>

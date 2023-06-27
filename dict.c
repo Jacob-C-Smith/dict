@@ -536,7 +536,7 @@ size_t dict_keys ( dict *p_dict, char **keys )
     }
 
     // Copy memory
-    memcpy(keys, p_dict->keys, entry_count * sizeof(void *));
+    memcpy(keys, p_dict->keys, entry_count * sizeof(char *));
 
     // Unlock
     unlock_mutex(&p_dict->lock);
@@ -588,10 +588,27 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
             break;
     }
     
-
     // Make a new property
     if (property == (void*)0)
     {
+
+        // Resize iterable max?
+        if ( p_dict->entry_count >= p_dict->iterable_max )
+        {
+        
+            // Double the size
+            p_dict->iterable_max *= 2;
+    
+            // Reallocate iterable arrays
+            p_dict->keys   = DICT_REALLOC(p_dict->keys  , p_dict->iterable_max * sizeof(char *));
+            p_dict->values = DICT_REALLOC(p_dict->values, p_dict->iterable_max * sizeof(void *));
+    
+            // Error checking
+            {
+                if ( p_dict->keys   == (void *) 0 ) goto no_mem;
+                if ( p_dict->values == (void *) 0 ) goto no_mem;
+            }
+        }
 
         // Allocate a new dict_item
         property = DICT_REALLOC(0, sizeof(dict_item));
@@ -610,35 +627,22 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
         // Insert the hash
         property->next = p_dict->entries[(h % p_dict->entry_max)];
         property->index = p_dict->entry_count;
-
+        fflush(stdout);
+        
         p_dict->entries[(h % p_dict->entry_max)] = property;
-
+        fflush(stdout);
+        
         // Update the iterables
-        p_dict->keys[p_dict->entry_count]   = (char *) key;
+        p_dict->keys[p_dict->entry_count] = (char *) key;
+        fflush(stdout);
+
         p_dict->values[p_dict->entry_count] = p_value;
+        fflush(stdout);
 
         // Increment the entry counter
         p_dict->entry_count++;
 
-        // Resize iterable max?
-        if ( p_dict->entry_count >= p_dict->iterable_max)
-        {
         
-            // Double the size
-            p_dict->iterable_max *= 2;
-    
-            // Reallocate iterable arrays
-            p_dict->keys   = DICT_REALLOC(p_dict->keys  , p_dict->iterable_max * sizeof(char *));
-            p_dict->values = DICT_REALLOC(p_dict->values, p_dict->iterable_max * sizeof(void *));
-    
-            // Error checking
-            {
-                if ( p_dict->keys == (void *) 0 )
-                    goto no_mem;
-                if ( p_dict->values == (void *) 0 )
-                    goto no_mem;
-            }
-        }
     }
 
     // Update an existing property
@@ -701,10 +705,10 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
     // Argument check
     {
-        if (p_dict == (void *)0)
-            goto no_dictionary;
-        if (key == (void*)0)
-            goto no_name;
+        #ifndef NDEBUG
+            if ( p_dict == (void *) 0 ) goto no_dictionary;
+            if ( key    == (void *) 0 ) goto no_name;
+        #endif
     }
 
     // Lock
@@ -765,14 +769,12 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         // Initialized data
         size_t              idx       = k->index;
         char               *swap_key  = p_dict->keys[p_dict->entry_count-1];
-        unsigned long long  swap_hash = 0;
+        unsigned long long  swap_hash = mmh64(swap_key, strlen(swap_key));
         dict_item          *swap_item = p_dict->entries[swap_hash % p_dict->entry_max];
 
         if ( swap_key == (void *) 0 )
             goto no_swap_key;
         
-        swap_hash = mmh64(swap_key, strlen(swap_key));
-
         if (idx == p_dict->entry_count-1)
         {
             p_dict->keys[p_dict->entry_count-1] = 0;
@@ -788,7 +790,8 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         p_dict->values[idx] = p_dict->values[p_dict->entry_count-1];
         p_dict->values[p_dict->entry_count-1] = 0;
 
-        swap_item->index = idx;
+        if ( swap_item )
+            swap_item->index = idx;
     }
 
     done:
@@ -801,7 +804,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     p_dict->entry_count--;
 
     // Resize iterable max?
-    if ( p_dict->entry_count < p_dict->iterable_max / 2)
+    if ( p_dict->entry_count > p_dict->iterable_max / 2)
     {
     
         // Double the size
@@ -953,16 +956,18 @@ int dict_copy ( dict *p_dict, dict **pp_dict )
     }
 
     // Initialized data
-    char **keys   = DICT_REALLOC(0, p_dict->entry_count + 1 * sizeof(char *));
-    void **values = DICT_REALLOC(0, p_dict->entry_count + 1 * sizeof(void *));
+    char **keys   = DICT_REALLOC(0, p_dict->entry_max * sizeof(char *));
+    void **values = DICT_REALLOC(0, p_dict->entry_max * sizeof(void *));
 
     // Error checking
     {
-        if ( keys == (void *) 0 )
-            goto no_mem;
-        if ( values == (void *) 0 )
-            goto no_mem;
+        if ( keys == (void *) 0 ) goto no_mem;
+        if ( values == (void *) 0 ) goto no_mem;
     }
+
+    // Zero set
+    memset(keys  , 0, p_dict->entry_max * sizeof(char *));
+    memset(values, 0, p_dict->entry_max * sizeof(char *));
 
     // Construct a new dictionary of the same size
     dict_construct(pp_dict, p_dict->entry_max);
@@ -1087,11 +1092,13 @@ int dict_clear ( dict *p_dict )
         goto done;
 
     // Clear iterables
-    for (size_t i = 0; i < p_dict->entry_count; i++)
-    {
-        p_dict->keys[i]   = 0;
-        p_dict->values[i] = 0;
-    }
+    if ( p_dict->keys )
+        for (size_t i = 0; i < p_dict->entry_count; i++)
+            p_dict->keys[i] = 0;
+
+    if ( p_dict->values)
+        for (size_t i = 0; i < p_dict->entry_count; i++)
+            p_dict->values[i] = 0;
     
     p_dict->entry_count = 0;
 

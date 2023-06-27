@@ -46,6 +46,7 @@ int main(int argc, const char* argv[])
     // Remove "Birds" and "Iguana"
     dict_pop(p_dict, "Birds", 0);
     dict_pop(p_dict, "Iguana", 0);
+    dict_pop(p_dict, "Brown Bear", 0);
 
     // Print the dictionarys' keys
     print_all_keys(p_dict);
