@@ -1,5 +1,6 @@
 ﻿/** !
  * @file dict/dict.h 
+ * 
  * @author Jacob Smith
  * 
  * Include header for dictionary library
@@ -8,9 +9,12 @@
 // Include guard
 #pragma once
 
+
+
 // Standard library
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 // Platform dependent macros
@@ -18,6 +22,11 @@
 #define DLLEXPORT extern __declspec(dllexport)
 #else
 #define DLLEXPORT
+#endif
+
+// Memory management macro
+#ifndef DICT_REALLOC
+#define DICT_REALLOC(p, sz) realloc(p,sz)
 #endif
 
 // Forward declarations

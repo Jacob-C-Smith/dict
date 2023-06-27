@@ -6,8 +6,10 @@
  * @author Jacob Smith
  */
 
+// Headers
 #include <dict/dict.h>
 
+// Mutex
 #ifndef GMUTEX
 #define GMUTEX
 
@@ -73,6 +75,7 @@ static inline int destroy_mutex ( mutex_t *p_mutex )
 }
 #endif
 
+// Structure definitions
 struct dict_item_s
 {
     char               *key;   // The key
@@ -92,6 +95,7 @@ struct dict_s {
     void               **values;        // Iterable values
 };
 
+// Internal type definitions
 typedef struct dict_item_s dict_item;
 
 unsigned long long mmh64 ( void* k, size_t l )
@@ -100,7 +104,7 @@ unsigned long long mmh64 ( void* k, size_t l )
     // Argument check
     {
         if (k == (void*)0)
-            goto no_k;
+            goto no_k;            
     }
     
     // Constant data
@@ -167,18 +171,20 @@ int dict_create ( dict **pp_dict )
 
     // Argument check
     {
-        if ( pp_dict == (void *) 0 )
-            goto no_dictionary;
+        #ifndef NDEBUG
+            if ( pp_dict == (void *) 0 ) goto no_dictionary;
+        #endif
     }
 
     // Allocate memory for a dictionary
-    dict *p_dict = calloc(1, sizeof(dict));
+    dict *p_dict = DICT_REALLOC(0, sizeof(dict));
 
     // Error checking
-    {
-        if ( p_dict == (void *) 0 )
-            goto no_mem;
-    }
+    if ( p_dict == (void *) 0 )
+        goto no_mem;
+
+    // Zero set
+    memset(p_dict, 0, sizeof(dict));
 
     // Return the allocated memory
     *pp_dict = p_dict;
@@ -218,10 +224,10 @@ int dict_construct ( dict **pp_dict, size_t size )
 
     // Argument check
     {
-        if ( pp_dict == (void *) 0 )
-            goto no_dictionary;
-        if (size == 0)
-            goto zero_size;
+        #ifndef NDEBUG
+            if ( pp_dict == (void *) 0 ) goto no_dictionary;
+            if ( size    ==          0 ) goto zero_size;
+        #endif
     }
 
     // Initialized data
@@ -239,11 +245,20 @@ int dict_construct ( dict **pp_dict, size_t size )
     p_dict->iterable_max = 1;
 
     // Allocate "size" number of properties
-    p_dict->entries      = calloc(size, sizeof(dict_item *));
+    p_dict->entries = DICT_REALLOC(0, size * sizeof(dict_item *));
 
     // Allocate key and value lists
-    p_dict->keys         = calloc(1, sizeof(char *));
-    p_dict->values       = calloc(1, sizeof(void *));
+    p_dict->keys   = DICT_REALLOC(0, sizeof(char *));
+    p_dict->values = DICT_REALLOC(0, sizeof(void *));
+
+    // Zero
+    memset(p_dict->entries, 0, size * sizeof(dict_item *));
+
+    // Zero
+    memset(p_dict->keys, 0, sizeof(char *));
+
+    // Zero
+    memset(p_dict->values, 0, sizeof(char *));
 
     // Create a mutex
     if ( create_mutex(&p_dict->lock) == 0 )
@@ -254,10 +269,10 @@ int dict_construct ( dict **pp_dict, size_t size )
         if ( p_dict->entries == (void *) 0 )
             goto no_mem;
 
-        if ( p_dict->keys    == (void *) 0 )
+        if ( p_dict->keys == (void *) 0 )
             goto no_mem;
 
-        if ( p_dict->values  == (void *) 0 )
+        if ( p_dict->values == (void *) 0 )
             goto no_mem;
     }
 
@@ -324,12 +339,9 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
 
     // Argument check
     {
-        if ( pp_dict == (void *) 0 )
-            goto no_dictionary;
-        if ( keys == (void *) 0 )
-            goto no_keys;
-        if ( size == 0 )
-            return 0;
+        if ( pp_dict == (void *) 0 ) goto no_dictionary;
+        if ( keys    == (void *) 0 ) goto no_keys;
+        if ( size    ==          0 ) return 0;
     }
 
     // Initialized data
@@ -385,10 +397,10 @@ void *dict_get ( dict *p_dict, char *key )
 
     // Argument check
     {
-        if ( p_dict == (void *) 0 )
-            goto no_dictionary;
-        if ( key == (void *) 0 )
-            goto no_name;
+        #ifndef NDEBUG
+            if ( p_dict == (void *) 0 ) goto no_dictionary;
+            if ( key    == (void *) 0 ) goto no_name;
+        #endif
     }
 
     // Lock
@@ -444,10 +456,12 @@ void *dict_get ( dict *p_dict, char *key )
 
 size_t dict_values ( dict *p_dict, void **values )
 {
+
     // Argument check
     {
-        if ( p_dict == (void *) 0 )
-            goto no_dictioanry;
+        #ifndef NDEBUG
+            if ( p_dict == (void *) 0 ) goto no_dictioanry;
+        #endif
     }
 
     // Lock
@@ -457,15 +471,14 @@ size_t dict_values ( dict *p_dict, void **values )
     size_t entry_count = p_dict->entry_count;
 
     // Error check
+    if (values == 0)
     {
-        if (values == 0)
-        {
             
-            // Unlock
-            unlock_mutex(&p_dict->lock);
-            
-            return entry_count;
-        }
+        // Unlock
+        unlock_mutex(&p_dict->lock);
+        
+        // Success
+        return entry_count;
     }
 
     // Copy memory
@@ -499,8 +512,9 @@ size_t dict_keys ( dict *p_dict, char **keys )
 
     // Argument check
     {
-        if ( p_dict == (void *) 0 )
-            goto no_dictioanry;
+        #ifndef NDEBUG
+            if ( p_dict == (void *) 0 ) goto no_dictioanry;
+        #endif
     }
 
     // Lock
@@ -564,24 +578,26 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
     dict_item          *property = p_dict->entries[h % p_dict->entry_max];
 
     // Find the key in the hash table
+
+    // Iterate through the linked list
+    for (; property != 0; property = property->next)
     {
 
-        // Iterate through the linked list
-        for (; property != 0; property = property->next)
-        {
-
-            // Is this the correct entry?
-            if ( strcmp(key, property->key) == 0 )
-                break;
-        }
+        // Is this the correct entry?
+        if ( strcmp(key, property->key) == 0 )
+            break;
     }
+    
 
     // Make a new property
     if (property == (void*)0)
     {
 
         // Allocate a new dict_item
-        property = (dict_item*) calloc(1, sizeof(dict_item));
+        property = DICT_REALLOC(0, sizeof(dict_item));
+
+        // Zero
+        memset(property, 0, sizeof(dict_item));
 
         // Error checking
         if ( property == (void *) 0 )
@@ -612,14 +628,14 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
             p_dict->iterable_max *= 2;
     
             // Reallocate iterable arrays
-            p_dict->keys   = realloc(p_dict->keys  , p_dict->iterable_max * sizeof(void *));
-            p_dict->values = realloc(p_dict->values, p_dict->iterable_max * sizeof(void *));
+            p_dict->keys   = DICT_REALLOC(p_dict->keys  , p_dict->iterable_max * sizeof(char *));
+            p_dict->values = DICT_REALLOC(p_dict->values, p_dict->iterable_max * sizeof(void *));
     
             // Error checking
             {
                 if ( p_dict->keys == (void *) 0 )
                     goto no_mem;
-                if ( p_dict->keys == (void *) 0 )
+                if ( p_dict->values == (void *) 0 )
                     goto no_mem;
             }
         }
@@ -700,14 +716,20 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     dict_item          *k = 0;
 
     // Error check
-    if (i == 0)
+    if ( i == 0 )
         goto no_item;
 
     // Check the head
     if ( strcmp(key, i->key) == 0 )
     {
+
+        // Initialized data
         dict_item *j = i->next;
+
+        i = p_dict->entries[h % p_dict->entry_max];
+
         p_dict->entries[h % p_dict->entry_max] = j;
+        
         goto free_item;
     }
 
@@ -730,7 +752,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
     free_item:
 
-    if (strcmp(key, i->key) == 0)
+    if ( strcmp(key, i->key) == 0 )
         k=i;
 
     // Return the value
@@ -743,8 +765,13 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         // Initialized data
         size_t              idx       = k->index;
         char               *swap_key  = p_dict->keys[p_dict->entry_count-1];
-        unsigned long long  swap_hash = mmh64(swap_key, strlen(swap_key));
+        unsigned long long  swap_hash = 0;
         dict_item          *swap_item = p_dict->entries[swap_hash % p_dict->entry_max];
+
+        if ( swap_key == (void *) 0 )
+            goto no_swap_key;
+        
+        swap_hash = mmh64(swap_key, strlen(swap_key));
 
         if (idx == p_dict->entry_count-1)
         {
@@ -767,7 +794,8 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     done:
     
     // Free the pop'd dict_item
-    free(k);
+    if ( DICT_REALLOC(k, 0) )
+        goto failed_to_free;
 
     // Decrement entries
     p_dict->entry_count--;
@@ -780,8 +808,8 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         p_dict->iterable_max /= 2;
 
         // Reallocate iterable arrays
-        p_dict->keys   = realloc(p_dict->keys  , p_dict->iterable_max * sizeof(void *));
-        p_dict->values = realloc(p_dict->values, p_dict->iterable_max * sizeof(void *));
+        p_dict->keys   = DICT_REALLOC(p_dict->keys  , p_dict->iterable_max * sizeof(void *));
+        p_dict->values = DICT_REALLOC(p_dict->values, p_dict->iterable_max * sizeof(void *));
 
         // Error checking
         {
@@ -797,6 +825,9 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
     
     // Success
     return 1;
+
+    no_swap_key:
+    return 0;
 
     // Error handling
     {
@@ -843,6 +874,14 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
                 // Unlock
                 unlock_mutex(&p_dict->lock);
+
+                // Error
+                return 0;
+            
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
 
                 // Error
                 return 0;
@@ -902,20 +941,20 @@ int dict_foreach ( dict *p_dict, void (*function)(void *) )
     }
 }
 
-int dict_copy ( dict  *p_dict, dict** pp_dict )
+int dict_copy ( dict *p_dict, dict **pp_dict )
 {
     
     // Argument check
     {
-        if (p_dict == (void *)0)
-            goto no_dictionary;
-        if (pp_dict == (void*)0)
-            goto no_target;
+        #ifndef NDEBUG
+            if ( p_dict  == (void *) 0 ) goto no_dictionary;
+            if ( pp_dict == (void *) 0 ) goto no_target;
+        #endif
     }
 
     // Initialized data
-    char **keys   = calloc(p_dict->entry_count + 1, sizeof(char*));
-    void **values = calloc(p_dict->entry_count + 1, sizeof(char*));
+    char **keys   = DICT_REALLOC(0, p_dict->entry_count + 1 * sizeof(char *));
+    void **values = DICT_REALLOC(0, p_dict->entry_count + 1 * sizeof(void *));
 
     // Error checking
     {
@@ -934,15 +973,21 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
 
     // Iterate over each value
     for (size_t i = 0; i < p_dict->entry_count && keys[i]; i++)
-    {
         
         // Insert each value
         dict_add(*pp_dict, keys[i], values[i]);
-    }
     
     // Free the lists
-    free(keys);
-    free(values);
+    {
+
+        // Free the keys
+        if ( DICT_REALLOC(keys, 0) )
+            goto failed_to_free;
+        
+        // Free the values
+        if ( DICT_REALLOC(values, 0) )
+            goto failed_to_free;
+    }
 
     // Success
     return 1;
@@ -980,12 +1025,20 @@ int dict_copy ( dict  *p_dict, dict** pp_dict )
                 
                 // Error
                 return 0;
+            
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
         }
     }
 
 }
 
-int dict_clear ( dict  *p_dict )
+int dict_clear ( dict *p_dict )
 {
 
     // Argument check
@@ -1013,11 +1066,13 @@ int dict_clear ( dict  *p_dict )
             // Iterate through linked list
             while (di)
             {
-
+                
+                // Initialized data
                 dict_item *n = di->next;
                 
                 // Free the item
-                free(di);
+                if ( DICT_REALLOC(di, 0) )
+                    goto failed_to_free;
 
                 // Iterate
                 di = n;
@@ -1028,7 +1083,7 @@ int dict_clear ( dict  *p_dict )
         }
     }
 
-    if (p_dict->keys==0 && p_dict->values==0)
+    if ( p_dict->keys==0 && p_dict->values==0 )
         goto done;
 
     // Clear iterables
@@ -1041,6 +1096,7 @@ int dict_clear ( dict  *p_dict )
     p_dict->entry_count = 0;
 
     done:
+
     // Unlock
     unlock_mutex(&p_dict->lock);
 
@@ -1060,6 +1116,17 @@ int dict_clear ( dict  *p_dict )
                 // Error
                 return 0;
         }
+
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
     }
 }
 
@@ -1068,13 +1135,11 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
 
     // Argument check
     {
-
-        if ( p_dict == (void *) 0 )
-            goto no_dictionary;
-        if ( free_func == (void *) 0 )
-            goto no_free_func;
-        if ( p_dict->entry_count == 0 )
-            return 1;
+        #ifndef NDEBUG
+            if ( p_dict              == (void *) 0 ) goto no_dictionary;
+            if ( free_func           == (void *) 0 ) goto no_free_func;
+            if ( p_dict->entry_count == 0          ) return 1;
+        #endif
     }
 
     // Lock
@@ -1100,7 +1165,8 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
                 free_func(di->value);
 
                 // Free the item
-                free(di);
+                if ( DICT_REALLOC(di, 0) )
+                    goto failed_to_free;
 
                 // Iterate 
                 di = n;
@@ -1139,6 +1205,20 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
                 return 0;
             
         }
+
+        // Standard library
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Unlock
+                unlock_mutex(&p_dict->lock);
+                
+                // Error
+                return 0;
+        }
     }
 }
 
@@ -1166,41 +1246,77 @@ int dict_destroy ( dict  **pp_dict )
     unlock_mutex(&p_dict->lock);
 
     // Remove all the dictionary properties
-    dict_clear(p_dict);
+    if ( dict_clear(p_dict) == 0 )
+        goto failed_to_clear;
     
     // Free the hash table
-    free(p_dict->entries);
+    if ( DICT_REALLOC(p_dict->entries, 0) )
+        goto failed_to_free;
 
     // Free the iterables
-    free(p_dict->keys);
-    free(p_dict->values);
+    {
+
+        // Free the keys
+        if ( DICT_REALLOC(p_dict->keys, 0) )
+            goto failed_to_free;
+
+        // Free the values
+        if ( DICT_REALLOC(p_dict->values, 0) )
+            goto failed_to_free;
+    }
 
     // Destroy the mutex
     destroy_mutex(&p_dict->lock);
 
     // Free the dictionary
-    free(p_dict);
+    if ( DICT_REALLOC(p_dict, 0) )
+        goto failed_to_free;
     
     // Success
     return 1;
 
     // Error handling
     {
-        no_dictionary:
-            #ifndef NDEBUG
-                printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
-            #endif
 
-            // Error
-            return 0;
+        // Argument errors
+        {
+            no_dictionary:
+                #ifndef NDEBUG
+                    printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                #endif
 
-        pp_dict_null:
-            #ifndef NDEBUG
-                printf("[dict] Parameter \"pp_dict\" points to null pointer in call to function \"%s\"\n", __FUNCTION__);
-            #endif
+                // Error
+                return 0;
 
-            // Error
-            return 0;
-            
+            pp_dict_null:
+                #ifndef NDEBUG
+                    printf("[dict] Parameter \"pp_dict\" points to null pointer in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+    
+        // dict errors
+        {
+            failed_to_clear:
+                #ifndef NDEBUG
+                    printf("[dict] Call to \"dict_clear\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
     }
 }
