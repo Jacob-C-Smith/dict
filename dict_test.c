@@ -365,10 +365,11 @@ int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name  
     
     for (size_t i = 0; keys[i]; i++)
     {
-        char *test_name = calloc(10+1, sizeof(char));
+        char *test_name = DICT_REALLOC(0, (10 + 1) * sizeof(char));
+        memset(test_name, 0, sizeof(10+1 * sizeof(char)));
         sprintf(test_name, "dict_get_%s", keys[i]);
         print_test(name, test_name, test_get(dict_constructor, keys[i], values[i], match) );    
-        free(test_name);
+        DICT_REALLOC(test_name, 0);
     }
 
     print_test(name, "dict_get_X"      , test_get(dict_constructor, X_key, X_value, zero) );    
@@ -379,10 +380,11 @@ int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name  
 
     for (size_t i = 0; keys[i]; i++)
     {
-        char *test_name = calloc(10+1, sizeof(char));
+        char *test_name = DICT_REALLOC(0, (10 + 1) * sizeof(char));
+        memset(test_name, 0, sizeof(10+1 * sizeof(char)));
         sprintf(test_name, "dict_pop_%s", keys[i]);
         print_test(name, test_name , test_pop(dict_constructor, keys[i], values[i], match) );
-        free(test_name);
+        DICT_REALLOC(test_name, 0);
     }
     print_test(name, "dict_pop_X"      , test_pop(dict_constructor, X_key, X_value, zero) );
     print_test(name, "dict_pop_(null)" , test_pop(dict_constructor, (void *)0, X_value, zero) );
@@ -409,10 +411,11 @@ int test_two_element_dict ( int (*dict_constructor)(dict **), char *name, char *
     
     for (size_t i = 0; keys[i]; i++)
     {
-        char *test_name = calloc(10+1, sizeof(char));
+        char *test_name = DICT_REALLOC(0, ( 10 + 1 ) * sizeof(char));
+        memset(test_name, 0, sizeof(10+1 * sizeof(char)));
         sprintf(test_name, "dict_get_%s", keys[i]);
         print_test(name, test_name, test_get(dict_constructor, keys[i], values[i], match) );    
-        free(test_name);
+        DICT_REALLOC(test_name, 0);
     }
 
     print_test(name, "dict_get_X"      , test_get(dict_constructor, X_key, X_value, zero) );    
@@ -423,10 +426,11 @@ int test_two_element_dict ( int (*dict_constructor)(dict **), char *name, char *
 
     for (size_t i = 0; keys[i]; i++)
     {
-        char *test_name = calloc(10+1, sizeof(char));
+        char *test_name = DICT_REALLOC(0, ( 10 + 1 ) * sizeof(char));
+        memset(test_name, 0, sizeof(10+1 * sizeof(char)));
         sprintf(test_name, "dict_pop_%s", keys[i]);
         print_test(name, test_name , test_pop(dict_constructor, keys[i], values[i], match) );
-        free(test_name);
+        DICT_REALLOC(test_name, 0);
     }
     print_test(name, "dict_pop_X"      , test_pop(dict_constructor, X_key, X_value, zero) );
     print_test(name, "dict_pop_(null)" , test_pop(dict_constructor, (void *)0, X_value, zero) );
@@ -452,10 +456,13 @@ int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char
     
     for (size_t i = 0; keys[i]; i++)
     {
-        char *test_name = calloc(10+1, sizeof(char));
+        char *test_name = DICT_REALLOC(0, ( 10 + 1 ) * sizeof(char));
+
+        memset(test_name, 0, 10+1 * sizeof(char));
+
         sprintf(test_name, "dict_get_%s", keys[i]);
         print_test(name, test_name, test_get(dict_constructor, keys[i], values[i], match) );    
-        free(test_name);
+        DICT_REALLOC(test_name, 0);
     }
 
     print_test(name, "dict_get_X"      , test_get(dict_constructor, X_key, X_value, zero) );    
@@ -466,10 +473,11 @@ int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char
 
     for (size_t i = 0; keys[i]; i++)
     {
-        char *test_name = calloc(10+1, sizeof(char));
+        char *test_name = DICT_REALLOC(0, ( 10 + 1 ) * sizeof(char));
+        memset(test_name, 0, 10+1 * sizeof(char));
         sprintf(test_name, "dict_pop_%s", keys[i]);
         print_test(name, test_name , test_pop(dict_constructor, keys[i], values[i], match) );
-        free(test_name);
+        DICT_REALLOC(test_name, 0);
     }
     print_test(name, "dict_pop_X"      , test_pop(dict_constructor, X_key, X_value, zero) );
     print_test(name, "dict_pop_(null)" , test_pop(dict_constructor, (void *)0, X_value, zero) );
@@ -650,7 +658,7 @@ bool test_keys ( int(*dict_constructor)(dict **pp_dict), char **expected_keys, r
 
     // Get the key
     key_count = dict_keys(p_dict, 0);
-    keys      = calloc(key_count+1, sizeof(char *));
+    keys      = DICT_REALLOC(0, ( key_count + 1 ) * sizeof(char *));
     dict_keys(p_dict, keys);
 
     if ( expected_key_count != key_count )
@@ -676,7 +684,7 @@ bool test_keys ( int(*dict_constructor)(dict **pp_dict), char **expected_keys, r
     exit:
 
     // Free the keys
-    free(keys);
+    DICT_REALLOC(keys, 0);
 
     // Free the dict
     dict_destroy(&p_dict);
@@ -712,7 +720,7 @@ bool test_values ( int(*dict_constructor)(dict **pp_dict), void **expected_value
 
     // Get the values
     value_count = dict_values(p_dict, 0);
-    values      = calloc(value_count+1, sizeof(char *));
+    values      = DICT_REALLOC(0, (value_count + 1) * sizeof(char *));
     dict_values(p_dict, values);
 
     if ( expected_value_count != value_count )
@@ -738,7 +746,7 @@ bool test_values ( int(*dict_constructor)(dict **pp_dict), void **expected_value
     exit2:
 
     // Free the values
-    free(values);
+    DICT_REALLOC(values, 0);
 
     exit:
     // Free the dict
