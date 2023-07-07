@@ -17,6 +17,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+// sync submodule
+#include <sync/sync.h>
+
 // Platform dependent macros
 #ifdef _WIN64
 #define DLLEXPORT extern __declspec(dllexport)
