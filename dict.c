@@ -626,7 +626,7 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
                 #endif
 
                 // Unlock
-                mutex_unlock(&p_dict->_lock);
+                mutex_unlock(p_dict->_lock);
 
                 // Error
                 return 0;
