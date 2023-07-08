@@ -292,7 +292,7 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -300,7 +300,7 @@ int dict_from_keys ( dict **pp_dict, char **keys, size_t size )
 
             no_keys:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"keys\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"keys\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -365,7 +365,7 @@ void *dict_get ( dict *p_dict, char *key )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -373,7 +373,7 @@ void *dict_get ( dict *p_dict, char *key )
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"key\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"key\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -423,7 +423,7 @@ size_t dict_values ( dict *p_dict, void **values )
         {
             no_dictioanry:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -473,7 +473,7 @@ size_t dict_keys ( dict *p_dict, char **keys )
         {
             no_dictioanry:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -580,7 +580,7 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -588,7 +588,7 @@ int dict_add ( dict *p_dict, const char *key, void *p_value )
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"key\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"key\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -742,7 +742,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -750,7 +750,7 @@ int dict_pop ( dict *p_dict, char *key, void **pp_value )
 
             no_name:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"key\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"key\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -827,7 +827,7 @@ int dict_foreach ( dict *p_dict, void (*function)(void *) )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -835,7 +835,7 @@ int dict_foreach ( dict *p_dict, void (*function)(void *) )
 
             no_function:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"function\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"function\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -895,14 +895,14 @@ int dict_copy ( dict *p_dict, dict **pp_dict )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
                 return 0;
             no_target:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -1016,7 +1016,7 @@ int dict_clear ( dict *p_dict )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -1093,7 +1093,7 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"p_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -1101,7 +1101,7 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
 
             no_free_func:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"free_func\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"free_func\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
@@ -1175,7 +1175,7 @@ int dict_destroy ( dict  **pp_dict )
         {
             no_dictionary:
                 #ifndef NDEBUG
-                    printf("[dict] Null pointer provided for \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
+                    printf("[dict] Null pointer provided for parameter \"pp_dict\" in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error

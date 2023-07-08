@@ -12,6 +12,9 @@
 
 #include <dict/dict.h>
 
+// (Un)comment for no output
+//#define BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+
 // Possible values
 void *A_value = (void *) 0x0000000000000001,
      *B_value = (void *) 0x0000000000000002,
@@ -105,10 +108,11 @@ int main(int argc, const char* argv[])
     timestamp t0 = 0,
               t1 = 0;
 
+    // Initialize the timer library
     timer_init();
 
     // Formatting
-    printf(" _____________ \n|             |\n| DICT TESTER |\n|_____________|\n");
+    printf("|=============|\n| DICT TESTER |\n|=============|\n\n");
 
     // Start
     t0 = timer_high_precision();
@@ -137,7 +141,7 @@ int print_time_pretty ( double seconds )
            hours        = 0,
            minutes      = 0,
            __seconds    = 0,
-           milliseconds  = 0,
+           milliseconds = 0,
            microseconds = 0;
 
     // Days
@@ -411,7 +415,9 @@ int test_empty_dict(int(*dict_constructor)(dict **pp_dict), char *name)
     // Call the dict constructor
     dict_constructor(&p_dict);
 
-    printf("Scenario: %s\n", name);
+    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+        printf("Scenario: %s\n", name);
+    #endif
 
     print_test(name, "dict_add_A"      , test_add(dict_constructor, A_key    , A_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
@@ -436,9 +442,9 @@ int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name  
     
     // Call the dict constructor
     dict_constructor(&p_dict);
-
-    printf("SCENARIO: %s\n", name);
-
+    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+        printf("SCENARIO: %s\n", name);
+    #endif
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
     
@@ -483,7 +489,9 @@ int test_two_element_dict ( int (*dict_constructor)(dict **), char *name, char *
     // Call the dict constructor
     dict_constructor(&p_dict);
 
-    printf("SCENARIO: %s\n", name);
+    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+        printf("SCENARIO: %s\n", name);
+    #endif
 
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
@@ -528,7 +536,9 @@ int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char
     // Call the dict constructor
     dict_constructor(&p_dict);
 
-    printf("SCENARIO: %s\n", name);
+    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+        printf("SCENARIO: %s\n", name);
+    #endif
 
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
@@ -569,10 +579,9 @@ int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char
 
 int print_test ( const char *scenario_name, const char *test_name, bool passed )
 {
-
-    // Initialized data
-    printf("%s_test_%-17s %s\n",scenario_name, test_name, (passed) ? "PASS" : "FAIL");
-
+    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+        printf("%s_test_%-17s %s\n",scenario_name, test_name, (passed) ? "PASS" : "FAIL");
+    #endif
     // Increment the counters
     {
         if (passed)
@@ -598,11 +607,13 @@ int print_final_summary ()
     total_tests  += ephemeral_tests,
     total_passes += ephemeral_passes,
     total_fails  += ephemeral_fails;
-
-    // Print
-    printf("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
-    printf("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
     
+    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
+        // Print
+        printf("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
+        printf("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
+    #endif
+
     ephemeral_tests  = 0;
     ephemeral_passes = 0;
     ephemeral_fails  = 0;
