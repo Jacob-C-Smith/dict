@@ -1,6 +1,9 @@
-/*
- * @file dict tester
+/**!
+ * @file dict_test.c
+ * 
  * @author Jacob C Smith
+ * 
+ * dict tester
 */
 
 // TODO: Improve documentation
