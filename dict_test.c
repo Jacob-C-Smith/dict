@@ -446,7 +446,7 @@ int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name  
     // Call the dict constructor
     dict_constructor(&p_dict);
     #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("SCENARIO: %s\n", name);
+        printf("Scenario: %s\n", name);
     #endif
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
@@ -493,7 +493,7 @@ int test_two_element_dict ( int (*dict_constructor)(dict **), char *name, char *
     dict_constructor(&p_dict);
 
     #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("SCENARIO: %s\n", name);
+        printf("Scenario: %s\n", name);
     #endif
 
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
@@ -540,7 +540,7 @@ int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char
     dict_constructor(&p_dict);
 
     #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("SCENARIO: %s\n", name);
+        printf("Scenario: %s\n", name);
     #endif
 
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
