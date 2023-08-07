@@ -107,7 +107,7 @@ unsigned long long mmh64 ( const void* const k, size_t l )
     }
 }
 
-int dict_create ( const dict **const pp_dict )
+int dict_create ( dict **const pp_dict )
 {
 
     // Argument check
@@ -157,7 +157,7 @@ int dict_create ( const dict **const pp_dict )
     }
 }
 
-int dict_construct ( const dict **const pp_dict, size_t size )
+int dict_construct ( dict **const pp_dict, size_t size )
 {
 
     // Argument check
@@ -257,7 +257,7 @@ int dict_construct ( const dict **const pp_dict, size_t size )
     }
 }
 
-int dict_from_keys ( const dict **const pp_dict, const char *const *const keys, size_t size )
+int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t size )
 {
 
     // Argument check
@@ -382,7 +382,7 @@ const void *const dict_get ( const dict *const p_dict, const char *const key )
     }
 }
 
-size_t dict_values ( const dict *const p_dict, const void *const *const values )
+size_t dict_values ( const dict *const p_dict, void **const values )
 {
 
     // Argument check
@@ -432,7 +432,7 @@ size_t dict_values ( const dict *const p_dict, const void *const *const values )
     }
 }
 
-size_t dict_keys ( const dict *const p_dict, const char *const *const keys )
+size_t dict_keys ( const dict *const p_dict, const char **const keys )
 {
 
     // Argument check
@@ -483,7 +483,7 @@ size_t dict_keys ( const dict *const p_dict, const char *const *const keys )
     }
 }
 
-int dict_add ( dict *const p_dict, const char *const key, const void *const p_value )
+int dict_add ( dict *const p_dict, const char *const key,   void * const p_value )
 {
 
     // Argument check
@@ -844,7 +844,7 @@ int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size
     }
 }
 
-int dict_copy ( const dict *const p_dict, const dict *const *const pp_dict )
+int dict_copy ( dict *const p_dict, dict **const pp_dict )
 {
 
     // Argument check
@@ -854,7 +854,8 @@ int dict_copy ( const dict *const p_dict, const dict *const *const pp_dict )
     #endif
 
     // Initialized data
-    char **keys   = DICT_REALLOC(0, p_dict->entries.max * sizeof(char *));
+    dict  *i_dict = 0;
+    const char **keys   = DICT_REALLOC(0, p_dict->entries.max * sizeof(char *));
     void **values = DICT_REALLOC(0, p_dict->entries.max * sizeof(void *));
 
     // Error checking
@@ -884,6 +885,8 @@ int dict_copy ( const dict *const p_dict, const dict *const *const pp_dict )
 
     // Free the values
     if ( DICT_REALLOC(values, 0) ) goto failed_to_free;
+
+    *pp_dict = i_dict;
 
     // Success
     return 1;
@@ -1125,7 +1128,7 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
     }
 }
 
-int dict_destroy ( const dict **const pp_dict )
+int dict_destroy ( dict **const pp_dict )
 {
 
     // Argument check

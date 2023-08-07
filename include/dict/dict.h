@@ -52,7 +52,7 @@ typedef struct dict_s dict;
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_create ( const dict **const pp_dict );
+DLLEXPORT int dict_create ( dict **const pp_dict );
 
 // Constructors
 /** !
@@ -66,7 +66,7 @@ DLLEXPORT int dict_create ( const dict **const pp_dict );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_construct ( const dict **const pp_dict, size_t size );
+DLLEXPORT int dict_construct ( dict **const pp_dict, size_t size );
 
 /** !
  *  Construct a dictionary from an array of strings
@@ -80,7 +80,7 @@ DLLEXPORT int dict_construct ( const dict **const pp_dict, size_t size );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_from_keys ( const dict **const pp_dict, const char *const *const keys, size_t size );
+DLLEXPORT int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t size );
 
 // Accessors
 /** !
@@ -107,7 +107,7 @@ DLLEXPORT const void *const dict_get ( const dict *const p_dict, const char *con
  *
  * @return 1 on success, 0 on error, if values != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_values ( const dict *const p_dict, const void *const *const values );
+DLLEXPORT size_t dict_values ( const dict *const p_dict, void **const values );
 
 /** !
  *  Get a dictionarys' keys, or the number of properties in the dictionary
@@ -120,7 +120,7 @@ DLLEXPORT size_t dict_values ( const dict *const p_dict, const void *const *cons
  *
  * @return 1 on success, 0 on error, if keys != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_keys ( const dict *const p_dict, const char *const *const keys );
+DLLEXPORT size_t dict_keys ( const dict *const p_dict, const char **const keys );
 
 // Mutators
 /** !
@@ -134,7 +134,7 @@ DLLEXPORT size_t dict_keys ( const dict *const p_dict, const char *const *const 
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_add ( dict *const p_dict, const char *const key, const void *const p_value );
+DLLEXPORT int dict_add ( dict *const p_dict, const char *const key,  void * const p_value );
 
 /** !
  *  Remove a property from a dictionary. 
@@ -171,7 +171,7 @@ DLLEXPORT int dict_foreach ( dict *const p_dict, void (*function)(const void *co
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_copy ( const dict *const p_dict, const dict *const *const pp_dict );
+DLLEXPORT int dict_copy ( dict *const p_dict, dict **const pp_dict );
 
 // Clear all items
 /** !
@@ -208,4 +208,4 @@ DLLEXPORT int dict_free_clear ( const dict *const p_dict, void (*const free_func
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_destroy ( const dict **const pp_dict );
+DLLEXPORT int dict_destroy ( dict **const pp_dict );
