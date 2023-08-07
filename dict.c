@@ -42,7 +42,7 @@ struct dict_s
 // Internal type definitions
 typedef struct dict_item_s dict_item;
 
-unsigned long long mmh64 ( const void* k, size_t l )
+unsigned long long mmh64 ( const void* const k, size_t l )
 {
 
     // Argument check
@@ -107,7 +107,7 @@ unsigned long long mmh64 ( const void* k, size_t l )
     }
 }
 
-int dict_create ( const dict **pp_dict )
+int dict_create ( const dict **const pp_dict )
 {
 
     // Argument check
@@ -157,7 +157,7 @@ int dict_create ( const dict **pp_dict )
     }
 }
 
-int dict_construct ( const dict **pp_dict, size_t size )
+int dict_construct ( const dict **const pp_dict, size_t size )
 {
 
     // Argument check
@@ -257,7 +257,7 @@ int dict_construct ( const dict **pp_dict, size_t size )
     }
 }
 
-int dict_from_keys ( const dict **pp_dict, const char **keys, size_t size )
+int dict_from_keys ( const dict **const pp_dict, const char *const *const keys, size_t size )
 {
 
     // Argument check
@@ -321,7 +321,7 @@ int dict_from_keys ( const dict **pp_dict, const char **keys, size_t size )
     }
 }
 
-void *dict_get ( const dict *p_dict, const char *key )
+const void *const dict_get ( const dict *const p_dict, const char *const key )
 {
 
     // Argument check
@@ -382,7 +382,7 @@ void *dict_get ( const dict *p_dict, const char *key )
     }
 }
 
-size_t dict_values ( const dict *p_dict, const void **values )
+size_t dict_values ( const dict *const p_dict, const void *const *const values )
 {
 
     // Argument check
@@ -432,7 +432,7 @@ size_t dict_values ( const dict *p_dict, const void **values )
     }
 }
 
-size_t dict_keys ( const dict *p_dict, const char **keys )
+size_t dict_keys ( const dict *const p_dict, const char *const *const keys )
 {
 
     // Argument check
@@ -483,7 +483,7 @@ size_t dict_keys ( const dict *p_dict, const char **keys )
     }
 }
 
-int dict_add ( dict *p_dict, const char *key, const void *p_value )
+int dict_add ( dict *const p_dict, const char *const key, const void *const p_value )
 {
 
     // Argument check
@@ -611,7 +611,7 @@ int dict_add ( dict *p_dict, const char *key, const void *p_value )
     }
 }
 
-int dict_pop ( dict *p_dict, const char *key, const void **pp_value )
+int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_value )
 {
 
     // Argument check
@@ -795,7 +795,7 @@ int dict_pop ( dict *p_dict, const char *key, const void **pp_value )
     }
 }
 
-int dict_foreach ( const dict *p_dict, void (*function)(void *) )
+int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size_t i) )
 {
 
     // Argument check
@@ -812,7 +812,7 @@ int dict_foreach ( const dict *p_dict, void (*function)(void *) )
     for (size_t i = 0; i < p_dict->entries.count; i++)
 
         // Call the function on the item
-        function(p_dict->iterable.values[i]);
+        function(p_dict->iterable.values[i], i);
 
     // Unlock
     mutex_unlock(p_dict->_lock);
@@ -844,7 +844,7 @@ int dict_foreach ( const dict *p_dict, void (*function)(void *) )
     }
 }
 
-int dict_copy ( const dict *p_dict, const dict **pp_dict )
+int dict_copy ( const dict *const p_dict, const dict *const *const pp_dict )
 {
 
     // Argument check
@@ -933,7 +933,7 @@ int dict_copy ( const dict *p_dict, const dict **pp_dict )
     }
 }
 
-int dict_clear ( dict *p_dict )
+int dict_clear ( dict *const p_dict )
 {
 
     // Argument check
@@ -1036,7 +1036,7 @@ int dict_clear ( dict *p_dict )
     }
 }
 
-int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
+int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const void *const) )
 {
 
     // Argument check
@@ -1125,7 +1125,7 @@ int dict_free_clear ( dict *p_dict, void (*free_func)(void *) )
     }
 }
 
-int dict_destroy ( const dict **pp_dict )
+int dict_destroy ( const dict **const pp_dict )
 {
 
     // Argument check

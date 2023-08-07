@@ -52,7 +52,7 @@ typedef struct dict_s dict;
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_create ( const dict **pp_dict );
+DLLEXPORT int dict_create ( const dict **const pp_dict );
 
 // Constructors
 /** !
@@ -66,7 +66,7 @@ DLLEXPORT int dict_create ( const dict **pp_dict );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_construct ( const dict **pp_dict, size_t size );
+DLLEXPORT int dict_construct ( const dict **const pp_dict, size_t size );
 
 /** !
  *  Construct a dictionary from an array of strings
@@ -80,7 +80,7 @@ DLLEXPORT int dict_construct ( const dict **pp_dict, size_t size );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_from_keys ( const dict **pp_dict, const char **keys, size_t size );
+DLLEXPORT int dict_from_keys ( const dict **const pp_dict, const char *const *const keys, size_t size );
 
 // Accessors
 /** !
@@ -94,7 +94,7 @@ DLLEXPORT int dict_from_keys ( const dict **pp_dict, const char **keys, size_t s
  *
  * @return pointer to specified property's value on success, null pointer on error
  */
-DLLEXPORT void *dict_get ( const dict *p_dict, const char *key );
+DLLEXPORT const void *const dict_get ( const dict *const p_dict, const char *const key );
 
 /** !
  *  Get a dictionarys' values, or the number of properties in the dictionary
@@ -107,7 +107,7 @@ DLLEXPORT void *dict_get ( const dict *p_dict, const char *key );
  *
  * @return 1 on success, 0 on error, if values != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_values ( const dict *p_dict, const void **values );
+DLLEXPORT size_t dict_values ( const dict *const p_dict, const void *const *const values );
 
 /** !
  *  Get a dictionarys' keys, or the number of properties in the dictionary
@@ -120,7 +120,7 @@ DLLEXPORT size_t dict_values ( const dict *p_dict, const void **values );
  *
  * @return 1 on success, 0 on error, if keys != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_keys ( const dict *p_dict, const char **keys );
+DLLEXPORT size_t dict_keys ( const dict *const p_dict, const char *const *const keys );
 
 // Mutators
 /** !
@@ -134,7 +134,7 @@ DLLEXPORT size_t dict_keys ( const dict *p_dict, const char **keys );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_add ( dict *p_dict, const char *key, const void *p_value );
+DLLEXPORT int dict_add ( dict *const p_dict, const char *const key, const void *const p_value );
 
 /** !
  *  Remove a property from a dictionary. 
@@ -147,7 +147,7 @@ DLLEXPORT int dict_add ( dict *p_dict, const char *key, const void *p_value );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_pop ( dict *p_dict, const char *key, const void **pp_value );
+DLLEXPORT int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_value );
 
 // Iterators
 /** !
@@ -158,7 +158,7 @@ DLLEXPORT int dict_pop ( dict *p_dict, const char *key, const void **pp_value );
  * 
  * @return 1 on success, 0 on error
 */
-DLLEXPORT int dict_foreach ( const dict *p_dict, void (*function)(void *) );
+DLLEXPORT int dict_foreach ( dict *const p_dict, void (*function)(const void *const, size_t i) );
 
 // Shallow copy
 /** !
@@ -171,7 +171,7 @@ DLLEXPORT int dict_foreach ( const dict *p_dict, void (*function)(void *) );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_copy ( const dict *p_dict, const dict **pp_dict );
+DLLEXPORT int dict_copy ( const dict *const p_dict, const dict *const *const pp_dict );
 
 // Clear all items
 /** !
@@ -183,7 +183,7 @@ DLLEXPORT int dict_copy ( const dict *p_dict, const dict **pp_dict );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_clear ( dict *p_dict );
+DLLEXPORT int dict_clear ( dict *const p_dict );
 
 /** !
  *  Remove all properties from a dictionary, and deallocate values with free_func
@@ -196,7 +196,7 @@ DLLEXPORT int dict_clear ( dict *p_dict );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_free_clear ( dict *p_dict, void (*free_func)(void *) );
+DLLEXPORT int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const void *const) );
 
 // Destructors
 /** !
@@ -208,4 +208,4 @@ DLLEXPORT int dict_free_clear ( dict *p_dict, void (*free_func)(void *) );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_destroy ( const dict **pp_dict );
+DLLEXPORT int dict_destroy ( const dict **const pp_dict );

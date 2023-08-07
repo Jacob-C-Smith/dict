@@ -7,10 +7,10 @@
 
 // Forward declaration
 int  print_all_keys         ( dict *d );
-void print_value_as_integer ( void *value );
+void print_value_as_integer ( const void *const p_value, size_t i );
 
 // Entry point
-int main(int argc, const char* argv[])
+int main ( int argc, const char* argv[] )
 {
 
     // Initialized data
@@ -80,9 +80,7 @@ int print_all_keys(dict* p_dict)
 
     // Print each key
     for (size_t i = 0; i < key_count; i++)
-    {
         printf("%s\n", keys[i]);
-    }
     
     // Formatting
     putchar('\n');
@@ -94,11 +92,11 @@ int print_all_keys(dict* p_dict)
     return 1;
 }
 
-void print_value_as_integer(void *value)
+void print_value_as_integer ( const void *const p_value, size_t i )
 {
 
     // Print the value as a hexidecimal number
-    printf("0x%zx\n",(size_t) value);
+    printf("0x%zx\n",(size_t) p_value);
 
     // Return
     return;
