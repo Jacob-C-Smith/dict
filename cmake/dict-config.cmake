@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 
 include(FeatureSummary)
 set_package_properties(DICT PROPERTIES
-    URL "https://www.g10.app/ADT/dict"
+    URL "https://g10.app/status/#abstract_data_i"
     DESCRIPTION "dictionary ADT"
 )
 
