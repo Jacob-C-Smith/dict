@@ -73,29 +73,29 @@ Fish
  ### Function definitions
  ```c 
  // Allocaters
- int     dict_create     ( dict **pp_dict );
+ int dict_create ( dict **pp_dict );
  
  // Constructors
- int     dict_construct  ( dict **pp_dict, size_t      size );
- int     dict_from_keys  ( dict **pp_dict, char      **keys, size_t   keys_length );
+ int dict_construct ( dict **pp_dict, size_t   size );
+ int dict_from_keys ( dict **pp_dict, char   **keys, size_t keys_length );
  
  // Accessors
- void   *dict_get        ( dict  *p_dict, char        *key );
- size_t  dict_values     ( dict  *p_dict, char       **values );
- size_t  dict_keys       ( dict  *p_dict, char       **keys );
+ void   *dict_get    ( dict *p_dict, char *key );
+ size_t  dict_values ( dict *p_dict, char **values );
+ size_t  dict_keys   ( dict *p_dict, char **keys );
  
  // Mutators
- int     dict_add        ( dict  *p_dict, const char  *key, void     *p_value );
- int     dict_pop        ( dict  *p_dict, char        *key, void    **pp_value );
+ int dict_add ( dict *p_dict, const char *key, void  *p_value );
+ int dict_pop ( dict *p_dict, char       *key, void **pp_value );
  
  // Shallow copy
- int     dict_copy       ( dict  *p_dict, dict       **pp_dict );
+ int dict_copy ( dict *p_dict, dict **pp_dict );
  
  // Clear all items
- int     dict_clear      ( dict  *p_dict );
- int     dict_free_clear ( dict  *p_dict, void       (*free_func) (void *) );
+ int dict_clear      ( dict *p_dict );
+ int dict_free_clear ( dict *p_dict, void (*free_func) (void *) );
 
  // Destructors
- int     dict_destroy    ( dict **pp_dict );
+ int dict_destroy ( dict **pp_dict );
  ```
 
