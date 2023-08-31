@@ -111,9 +111,7 @@ int dict_create ( dict **const pp_dict )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_dict == (void *) 0 ) goto no_dictionary;
-    #endif
+    if ( pp_dict == (void *) 0 ) goto no_dictionary;
 
     // Allocate memory for a dictionary
     dict *p_dict = DICT_REALLOC(0, sizeof(dict));
@@ -161,10 +159,8 @@ int dict_construct ( dict **const pp_dict, size_t size )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_dict == (void *) 0 ) goto no_dictionary;
-        if ( size    ==          0 ) goto zero_size;
-    #endif
+    if ( pp_dict == (void *) 0 ) goto no_dictionary;
+    if ( size    ==          0 ) goto zero_size;
 
     // Initialized data
     dict *p_dict = 0;
@@ -261,11 +257,11 @@ int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_dict == (void *) 0 ) goto no_dictionary;
-        if ( keys    == (void *) 0 ) goto no_keys;
-        if ( size    ==          0 ) return 0;
-    #endif
+    if ( pp_dict == (void *) 0 ) goto no_dictionary;
+    if ( keys    == (void *) 0 ) goto no_keys;
+
+    // TODO: replace with a goto
+    if ( size == 0 ) return 0;
 
     // Initialized data
     dict *p_dict = 0;
@@ -325,10 +321,8 @@ const void *const dict_get ( const dict *const p_dict, const char *const key )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict == (void *) 0 ) goto no_dictionary;
-        if ( key    == (void *) 0 ) goto no_name;
-    #endif
+    if ( p_dict == (void *) 0 ) goto no_dictionary;
+    if ( key    == (void *) 0 ) goto no_name;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -386,9 +380,7 @@ size_t dict_values ( const dict *const p_dict, void **const values )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict == (void *) 0 ) goto no_dictioanry;
-    #endif
+    if ( p_dict == (void *) 0 ) goto no_dictioanry;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -436,9 +428,7 @@ size_t dict_keys ( const dict *const p_dict, const char **const keys )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict == (void *) 0 ) goto no_dictioanry;
-    #endif
+    if ( p_dict == (void *) 0 ) goto no_dictioanry;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -487,10 +477,8 @@ int dict_add ( dict *const p_dict, const char *const key,   void * const p_value
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict == (void *) 0 ) goto no_dictionary;
-        if ( key    == (void *) 0 ) goto no_name;
-    #endif
+    if ( p_dict == (void *) 0 ) goto no_dictionary;
+    if ( key    == (void *) 0 ) goto no_name;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -615,10 +603,8 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict == (void *) 0 ) goto no_dictionary;
-        if ( key    == (void *) 0 ) goto no_name;
-    #endif
+    if ( p_dict == (void *) 0 ) goto no_dictionary;
+    if ( key    == (void *) 0 ) goto no_name;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -799,11 +785,9 @@ int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict                == (void *) 0 ) goto no_dictionary;
-        if ( function              == (void *) 0 ) goto no_function;
-        if ( p_dict->entries.count ==          0 ) return 1;
-    #endif
+    if ( p_dict                == (void *) 0 ) goto no_dictionary;
+    if ( function              == (void *) 0 ) goto no_function;
+    if ( p_dict->entries.count ==          0 ) return 1;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -848,10 +832,8 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict  == (void *) 0 ) goto no_dictionary;
-        if ( pp_dict == (void *) 0 ) goto no_target;
-    #endif
+    if ( p_dict  == (void *) 0 ) goto no_dictionary;
+    if ( pp_dict == (void *) 0 ) goto no_target;
 
     // Initialized data
     dict  *i_dict = 0;
@@ -940,10 +922,8 @@ int dict_clear ( dict *const p_dict )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict                == (void *) 0 ) goto no_dictionary;
-        if ( p_dict->entries.count ==          0 ) return 1;
-    #endif
+    if ( p_dict                == (void *) 0 ) goto no_dictionary;
+    if ( p_dict->entries.count ==          0 ) return 1;
 
     // Lock
     mutex_lock(p_dict->_lock);
@@ -1043,12 +1023,10 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( p_dict                == (void *) 0 ) goto no_dictionary;
-        if ( free_func             == (void *) 0 ) goto no_free_func;
-        if ( p_dict->entries.count ==          0 ) return 1;
-    #endif
-
+    if ( p_dict                == (void *) 0 ) goto no_dictionary;
+    if ( free_func             == (void *) 0 ) goto no_free_func;
+    if ( p_dict->entries.count ==          0 ) return 1;
+    
     // Lock
     mutex_lock(p_dict->_lock);
 
@@ -1132,10 +1110,8 @@ int dict_destroy ( dict **const pp_dict )
 {
 
     // Argument check
-    #ifndef NDEBUG
-        if ( pp_dict  == (void *) 0 ) goto no_dictionary;
-        if ( *pp_dict == (void *) 0 ) goto pp_dict_null;
-    #endif
+    if ( pp_dict  == (void *) 0 ) goto no_dictionary;
+    if ( *pp_dict == (void *) 0 ) goto pp_dict_null;
 
     // Initialized data
     dict *p_dict = *pp_dict;
