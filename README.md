@@ -80,7 +80,7 @@ Fish
  int dict_from_keys ( dict **pp_dict, char   **keys, size_t keys_length );
  
  // Accessors
- void   *dict_get    ( dict *p_dict, char *key );
+ void   *dict_get    ( dict *p_dict, char  *key );
  size_t  dict_values ( dict *p_dict, char **values );
  size_t  dict_keys   ( dict *p_dict, char **keys );
  
