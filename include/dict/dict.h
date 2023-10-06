@@ -20,6 +20,9 @@
 // sync submodule
 #include <sync/sync.h>
 
+// crypto submodule
+#include <crypto/crypto.h>
+
 // Platform dependent macros
 #ifdef _WIN64
 #define DLLEXPORT extern __declspec(dllexport)

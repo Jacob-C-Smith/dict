@@ -42,71 +42,6 @@ struct dict_s
 // Internal type definitions
 typedef struct dict_item_s dict_item;
 
-unsigned long long mmh64 ( const void* const k, size_t l )
-{
-
-    // Argument check
-    if ( k == (void *) 0 ) goto no_k;
-
-    // Constant data
-    const unsigned long long m = 0xc6a4a7935bd1e995;
-    const int                r = 47;
-
-    // Initialized data
-    unsigned long long   h    = 0x41C64E6D ^ (l * m);
-    unsigned long long  *data = (unsigned long long*)k;
-    unsigned long long  *end  = (l >> 3) + data;
-    unsigned char       *d2   = 0;
-
-    // Just go look it up on Wikipedia. I'm not going to pretend I know how this works.
-    // https://en.wikipedia.org/wiki/MurmurHash
-    while (data != end)
-    {
-        unsigned long long k = *data++;
-
-        k *= m;
-        k ^= k >> r;
-        k *= m;
-
-        h ^= k;
-        h *= m;
-    }
-
-    d2 = (unsigned char *)data;
-
-    switch (l & 7)
-    {
-        case 7: h ^= (unsigned long long)(d2[6]) << 48;
-        case 6: h ^= (unsigned long long)(d2[5]) << 40;
-        case 5: h ^= (unsigned long long)(d2[4]) << 32;
-        case 4: h ^= (unsigned long long)(d2[3]) << 24;
-        case 3: h ^= (unsigned long long)(d2[2]) << 16;
-        case 2: h ^= (unsigned long long)(d2[1]) << 8;
-        case 1: h ^= (unsigned long long)(d2[0]);
-            h *= m;
-    }
-
-    h ^= h >> r;
-    h *= m;
-    h ^= h >> r;
-
-    // Success
-    return h;
-
-    // Error handling
-    {
-
-        // Argument error
-        {
-            no_k:
-                printf("[dict] Null pointer provided for parameter \"k\" in call to function \"%s\"\n", __FUNCTION__);
-
-                // Error
-                return 0;
-        }
-    }
-}
-
 int dict_create ( dict **const pp_dict )
 {
 
@@ -328,7 +263,7 @@ const void *const dict_get ( const dict *const p_dict, const char *const key )
     mutex_lock(p_dict->_lock);
 
     // Initialized data
-    dict_item *ret = p_dict->entries.data[mmh64(key, strlen(key)) % p_dict->entries.max];
+    dict_item *ret = p_dict->entries.data[crypto_mmh64(key, strlen(key)) % p_dict->entries.max];
     void      *val = 0;
 
     // Walk the list
@@ -484,7 +419,7 @@ int dict_add ( dict *const p_dict, const char *const key,   void * const p_value
     mutex_lock(p_dict->_lock);
 
     // Initialized data
-    unsigned long long  h        = mmh64((void *)key, strlen(key));
+    unsigned long long  h        = crypto_mmh64((void *)key, strlen(key));
     dict_item          *property = p_dict->entries.data[h % p_dict->entries.max];
 
     // Find the key in the hash table
@@ -610,7 +545,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     mutex_lock(p_dict->_lock);
 
     // Initialized data
-    unsigned long long  h = mmh64(key, strlen(key));
+    unsigned long long  h = crypto_mmh64(key, strlen(key));
     dict_item          *i = p_dict->entries.data[h % p_dict->entries.max],
                        *k = 0;
 
@@ -664,7 +599,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
         // Initialized data
         size_t              idx       = k->index;
         char               *swap_key  = p_dict->iterable.keys[p_dict->entries.count-1];
-        unsigned long long  swap_hash = mmh64(swap_key, strlen(swap_key));
+        unsigned long long  swap_hash = crypto_mmh64(swap_key, strlen(swap_key));
         dict_item          *swap_item = p_dict->entries.data[swap_hash % p_dict->entries.max];
 
         if ( swap_key == (void *) 0 ) goto no_swap_key;
