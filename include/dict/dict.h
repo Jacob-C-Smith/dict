@@ -61,15 +61,16 @@ DLLEXPORT int dict_create ( dict **const pp_dict );
 /** !
  *  Construct a dictionary with a specific number of hash table entries
  *
- * @param pp_dict  return
- * @param size     number of hash table entries. 
+ * @param pp_dict           return
+ * @param size              number of hash table entries. 
+ * @param pfn_hash_function pointer to a hash function, or 0 for default
  *
  * @sa dict_create
  * @sa dict_destroy
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_construct ( dict **const pp_dict, size_t size );
+DLLEXPORT int dict_construct ( dict **const pp_dict, size_t size, crypto_hash_function_64_t pfn_hash_function );
 
 /** !
  *  Construct a dictionary from an array of strings

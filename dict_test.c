@@ -242,7 +242,7 @@ int run_tests()
 int construct_empty(dict **pp_dict)
 {
     // Construct a dict
-    dict_construct(pp_dict, 1);
+    dict_construct(pp_dict, 1, 0);
 
     // dict = []
     return 1;

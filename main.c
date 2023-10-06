@@ -19,7 +19,7 @@ int main ( int argc, const char* argv[] )
     dict     *p_dict_copy = (void *) 0;
 
     // Make a dictionary with 4 hash table items
-    dict_construct(&p_dict, 4);
+    dict_construct(&p_dict, 4, 0);
 
     // Insert some items
     dict_add(p_dict, "Red"  , (void *)0xff0000);

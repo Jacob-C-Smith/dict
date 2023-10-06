@@ -36,6 +36,8 @@ struct dict_s
         size_t   max;    // Iterable array bound
     } iterable;
 
+    crypto_hash_function_64_t hash_function; // Pointer to the hash function
+
     mutex _lock; // Locked when writing values
 };
 
@@ -90,7 +92,7 @@ int dict_create ( dict **const pp_dict )
     }
 }
 
-int dict_construct ( dict **const pp_dict, size_t size )
+int dict_construct ( dict **const pp_dict, size_t size, crypto_hash_function_64_t pfn_hash_function )
 {
 
     // Argument check
@@ -124,6 +126,15 @@ int dict_construct ( dict **const pp_dict, size_t size )
 
     // Create a mutex
     if ( mutex_create(&p_dict->_lock) == 0 ) goto failed_to_create_mutex;
+
+    // Set the hash function
+    if ( pfn_hash_function ) 
+        p_dict->hash_function = pfn_hash_function;
+
+    // Default
+    else
+        p_dict->hash_function = crypto_mmh64;
+
 
     // Error checking
     if ( p_dict->entries.data    == (void *) 0 ) goto no_mem;
@@ -202,7 +213,7 @@ int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t
     dict *p_dict = 0;
 
     // Allocate a dictionary
-    if ( dict_construct(&p_dict, size) == 0 ) goto failed_to_construct_dict;
+    if ( dict_construct(&p_dict, size, 0) == 0 ) goto failed_to_construct_dict;
 
     // Iterate over each key
     for (size_t i = 0; keys[i]; i++)
@@ -263,7 +274,7 @@ const void *const dict_get ( const dict *const p_dict, const char *const key )
     mutex_lock(p_dict->_lock);
 
     // Initialized data
-    dict_item *ret = p_dict->entries.data[crypto_mmh64(key, strlen(key)) % p_dict->entries.max];
+    dict_item *ret = p_dict->entries.data[p_dict->hash_function(key, strlen(key)) % p_dict->entries.max];
     void      *val = 0;
 
     // Walk the list
@@ -419,7 +430,7 @@ int dict_add ( dict *const p_dict, const char *const key,   void * const p_value
     mutex_lock(p_dict->_lock);
 
     // Initialized data
-    unsigned long long  h        = crypto_mmh64((void *)key, strlen(key));
+    unsigned long long  h        = p_dict->hash_function((void *)key, strlen(key));
     dict_item          *property = p_dict->entries.data[h % p_dict->entries.max];
 
     // Find the key in the hash table
@@ -545,7 +556,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     mutex_lock(p_dict->_lock);
 
     // Initialized data
-    unsigned long long  h = crypto_mmh64(key, strlen(key));
+    unsigned long long  h = p_dict->hash_function(key, strlen(key));
     dict_item          *i = p_dict->entries.data[h % p_dict->entries.max],
                        *k = 0;
 
@@ -599,7 +610,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
         // Initialized data
         size_t              idx       = k->index;
         char               *swap_key  = p_dict->iterable.keys[p_dict->entries.count-1];
-        unsigned long long  swap_hash = crypto_mmh64(swap_key, strlen(swap_key));
+        unsigned long long  swap_hash = p_dict->hash_function(swap_key, strlen(swap_key));
         dict_item          *swap_item = p_dict->entries.data[swap_hash % p_dict->entries.max];
 
         if ( swap_key == (void *) 0 ) goto no_swap_key;
@@ -784,7 +795,7 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
     memset(values, 0, p_dict->entries.max * sizeof(char *));
 
     // Construct a new dictionary of the same size
-    dict_construct(pp_dict, p_dict->entries.max);
+    dict_construct(pp_dict, p_dict->entries.max, 0);
 
     // Get the keys and values out of the first dictionary
     dict_keys(p_dict, keys);
