@@ -1,8 +1,14 @@
 # dict
 [![CMake](https://github.com/Jacob-C-Smith/dict/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/dict/actions/workflows/cmake.yml)
- 
+
+**Dependencies:**\
+[![crypto](https://github.com/Jacob-C-Smith/crypto/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/crypto/actions/workflows/cmake.yml) [![sync](https://github.com/Jacob-C-Smith/sync/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/sync/actions/workflows/cmake.yml)
+
+
  A minimal, thread-safe dictionary implementation written in C. 
  
+
+
  > 1 [Download](#download)
  >
  > 2 [Build](#build)
