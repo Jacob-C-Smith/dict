@@ -637,7 +637,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     done:
 
     // Free the pop'd dict_item
-    if ( DICT_REALLOC(k, 0) ) goto failed_to_free;
+    DICT_REALLOC(k, 0);
 
     // Decrement entries
     p_dict->entries.count--;
@@ -712,14 +712,6 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
 
                 // Unlock
                 mutex_unlock(p_dict->_lock);
-
-                // Error
-                return 0;
-
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
-                #endif
 
                 // Error
                 return 0;
@@ -809,10 +801,10 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
 
     // Free the lists
     // Free the keys
-    if ( DICT_REALLOC(keys, 0) ) goto failed_to_free;
+    DICT_REALLOC(keys, 0);
 
     // Free the values
-    if ( DICT_REALLOC(values, 0) ) goto failed_to_free;
+    DICT_REALLOC(values, 0);
 
     *pp_dict = i_dict;
 
@@ -852,14 +844,6 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
 
                 // Error
                 return 0;
-
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Error
-                return 0;
         }
     }
 }
@@ -893,7 +877,7 @@ int dict_clear ( dict *const p_dict )
                 dict_item *n = i_di->next;
 
                 // Free the item
-                if ( DICT_REALLOC(i_di, 0) ) goto failed_to_free;
+                DICT_REALLOC(i_di, 0);
 
                 // Iterate
                 i_di = n;
@@ -951,17 +935,6 @@ int dict_clear ( dict *const p_dict )
                 // Error
                 return 0;
         }
-
-        // Standard library errors
-        {
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Error
-                return 0;
-        }
     }
 }
 
@@ -996,7 +969,7 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
                 free_func(i_di->value);
 
                 // Free the item
-                if ( DICT_REALLOC(i_di, 0) ) goto failed_to_free;
+                DICT_REALLOC(i_di, 0);
 
                 // Iterate
                 i_di = n;
@@ -1035,20 +1008,6 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
                 return 0;
 
         }
-
-        // Standard library
-        {
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Unlock
-                mutex_unlock(p_dict->_lock);
-
-                // Error
-                return 0;
-        }
     }
 }
 
@@ -1075,20 +1034,20 @@ int dict_destroy ( dict **const pp_dict )
     if ( dict_clear(p_dict) == 0 ) goto failed_to_clear;
 
     // Free the hash table
-    if ( DICT_REALLOC(p_dict->entries.data, 0) ) goto failed_to_free;
+    DICT_REALLOC(p_dict->entries.data, 0);
 
     // Free the iterables
     // Free the keys
-    if ( DICT_REALLOC(p_dict->iterable.keys, 0) ) goto failed_to_free;
+    DICT_REALLOC(p_dict->iterable.keys, 0);
 
     // Free the values
-    if ( DICT_REALLOC(p_dict->iterable.values, 0) ) goto failed_to_free;
+    DICT_REALLOC(p_dict->iterable.values, 0);
 
     // Destroy the mutex
     mutex_destroy(&p_dict->_lock);
 
     // Free the dictionary
-    if ( DICT_REALLOC(p_dict, 0) ) goto failed_to_free;
+    DICT_REALLOC(p_dict, 0);
 
     // Success
     return 1;
@@ -1109,17 +1068,6 @@ int dict_destroy ( dict **const pp_dict )
             pp_dict_null:
                 #ifndef NDEBUG
                     printf("[dict] Parameter \"pp_dict\" points to null pointer in call to function \"%s\"\n", __FUNCTION__);
-                #endif
-
-                // Error
-                return 0;
-        }
-
-        // Standard library errors
-        {
-            failed_to_free:
-                #ifndef NDEBUG
-                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error
