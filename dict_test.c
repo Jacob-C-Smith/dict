@@ -14,6 +14,7 @@
 #include <stdbool.h>
 
 #include <dict/dict.h>
+#include <log/log.h>
 
 // (Un)comment for no output
 //#define BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
@@ -113,9 +114,13 @@ int main(int argc, const char* argv[])
 
     // Initialize the timer library
     timer_init();
+    log_init(0, true);
 
     // Formatting
-    printf("|=============|\n| DICT TESTER |\n|=============|\n\n");
+    printf(
+        "╭─────────────╮\n"\
+        "│ dict tester │\n"\
+        "╰─────────────╯\n\n");
 
     // Start
     t0 = timer_high_precision();
@@ -127,9 +132,9 @@ int main(int argc, const char* argv[])
     t1 = timer_high_precision();
 
     // Report the time it took to run the tests
-    printf("dict took ");
+    log_info("dict took ");
     print_time_pretty ( (double)(t1-t0)/(double)timer_seconds_divisor() );
-    printf(" to test\n");
+    log_info(" to test\n");
 
     // Exit
     return ( total_passes == total_tests ) ? EXIT_SUCCESS : EXIT_FAILURE;
@@ -166,28 +171,22 @@ int print_time_pretty ( double seconds )
     while ( _seconds > 0.000001 ) { microseconds++;_seconds-=0.000001; };
 
     // Print days
-    if ( days ) 
-        printf("%d D, ", days);
+    if ( days ) log_info("%d D, ", days);
     
     // Print hours
-    if ( hours )
-        printf("%d h, ", hours);
+    if ( hours ) log_info("%d h, ", hours);
 
     // Print minutes
-    if ( minutes )
-        printf("%d m, ", minutes);
+    if ( minutes ) log_info("%d m, ", minutes);
 
     // Print seconds
-    if ( __seconds )
-        printf("%d s, ", __seconds);
+    if ( __seconds ) log_info("%d s, ", __seconds);
     
     // Print milliseconds
-    if ( milliseconds )
-        printf("%d ms, ", milliseconds);
+    if ( milliseconds ) log_info("%d ms, ", milliseconds);
     
     // Print microseconds
-    if ( microseconds )
-        printf("%d us", microseconds);
+    if ( microseconds ) log_info("%d us", microseconds);
     
     // Success
     return 1;
@@ -418,9 +417,7 @@ int test_empty_dict(int(*dict_constructor)(dict **pp_dict), char *name)
     // Call the dict constructor
     dict_constructor(&p_dict);
 
-    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("Scenario: %s\n", name);
-    #endif
+    log_info("Scenario: %s\n", name);
 
     print_test(name, "dict_add_A"      , test_add(dict_constructor, A_key    , A_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
@@ -445,9 +442,9 @@ int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name  
     
     // Call the dict constructor
     dict_constructor(&p_dict);
-    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("Scenario: %s\n", name);
-    #endif
+
+    log_info("Scenario: %s\n", name);
+
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
     
@@ -582,9 +579,12 @@ int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char
 
 int print_test ( const char *scenario_name, const char *test_name, bool passed )
 {
-    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("%s_test_%-17s %s\n",scenario_name, test_name, (passed) ? "PASS" : "FAIL");
-    #endif
+
+    if ( passed )
+        log_pass("%s %s %s\n", "[PASS]", scenario_name, test_name);
+    else
+        log_fail("%s %s %s\n", "[FAIL]", scenario_name, test_name);
+
     // Increment the counters
     {
         if (passed)
@@ -611,11 +611,8 @@ int print_final_summary ()
     total_passes += ephemeral_passes,
     total_fails  += ephemeral_fails;
     
-    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        // Print
-        printf("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
-        printf("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
-    #endif
+    log_info("\nTests: %d, Passed: %d, Failed: %d (%%%.3f)\n",  ephemeral_tests, ephemeral_passes, ephemeral_fails, ((float)ephemeral_passes/(float)ephemeral_tests*100.f));
+    log_info("Total: %d, Passed: %d, Failed: %d (%%%.3f)\n\n",  total_tests, total_passes, total_fails, ((float)total_passes/(float)total_tests*100.f));
 
     ephemeral_tests  = 0;
     ephemeral_passes = 0;

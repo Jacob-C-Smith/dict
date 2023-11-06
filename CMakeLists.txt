@@ -43,6 +43,20 @@ if ( NOT "${HAS_CRYPTO}")
     set(HAS_CRYPTO true PARENT_SCOPE)
 endif()
 
+# Find the log module
+if ( NOT "${HAS_LOG}")
+
+    # Log
+    message("[dict] Adding log project")
+
+    # Add the log directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/log ${CMAKE_SOURCE_DIR}/build/log)
+
+    # Let any parent project know that this project has log
+    set(HAS_LOG true PARENT_SCOPE)
+endif()
+
+
 # Add the dict project
 if ( NOT "${HAS_DICT}")
 
@@ -61,9 +75,9 @@ target_link_libraries(dict_example sync crypto)
 
 # Add source to the tester
 add_executable (dict_test "dict_test.c" "dict.c")
-add_dependencies(dict_test sync crypto)
+add_dependencies(dict_test sync crypto log)
 target_include_directories(dict_test PUBLIC include include/dict ${CMAKE_SOURCE_DIR}/extern/sync/include/ ${CMAKE_SOURCE_DIR}/extern/crypto/include/)
-target_link_libraries(dict_test sync crypto)
+target_link_libraries(dict_test sync crypto log)
 
 # Add source to the library
 add_library(dict SHARED "dict.c")

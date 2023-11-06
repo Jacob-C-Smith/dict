@@ -4,3 +4,6 @@
 [submodule "extern/crypto"]
 	path = extern/crypto
 	url = https://github.com/Jacob-C-Smith/crypto
+[submodule "extern/log"]
+	path = extern/log
+	url = https://github.com/Jacob-C-Smith/log
