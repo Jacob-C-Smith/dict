@@ -1,9 +1,8 @@
-/**!
- * @file dict_test.c
- * 
- * @author Jacob C Smith
- * 
+/** !
  * dict tester
+ * 
+ * @file dict_test.c
+ * @author Jacob C Smith
 */
 
 // TODO: Improve documentation
@@ -411,12 +410,6 @@ int construct_A_clear_empty ( dict **pp_dict )
 int test_empty_dict(int(*dict_constructor)(dict **pp_dict), char *name)
 {
 
-    // Initialized_data
-    dict *p_dict = 0;
-    
-    // Call the dict constructor
-    dict_constructor(&p_dict);
-
     log_info("Scenario: %s\n", name);
 
     print_test(name, "dict_add_A"      , test_add(dict_constructor, A_key    , A_value, one) );
@@ -436,12 +429,6 @@ int test_empty_dict(int(*dict_constructor)(dict **pp_dict), char *name)
 
 int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name     , char **keys  , void **values )
 {
-
-    // Initialized_data
-    dict *p_dict = 0;
-    
-    // Call the dict constructor
-    dict_constructor(&p_dict);
 
     log_info("Scenario: %s\n", name);
 
@@ -483,15 +470,7 @@ int test_one_element_dict ( int (*dict_constructor)(dict **), char       *name  
 int test_two_element_dict ( int (*dict_constructor)(dict **), char *name, char **keys, void **values )
 {
 
-    // Initialized_data
-    dict *p_dict = 0;
-    
-    // Call the dict constructor
-    dict_constructor(&p_dict);
-
-    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("Scenario: %s\n", name);
-    #endif
+    printf("Scenario: %s\n", name);
 
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
@@ -530,15 +509,8 @@ int test_two_element_dict ( int (*dict_constructor)(dict **), char *name, char *
 
 int test_three_element_dict ( int (*dict_constructor)(dict **), char *name, char **keys, void **values )
 {
-    // Initialized_data
-    dict *p_dict = 0;
     
-    // Call the dict constructor
-    dict_constructor(&p_dict);
-
-    #ifndef BUILD_DICT_TEST_WITHOUT_TEST_OUTPUT
-        printf("Scenario: %s\n", name);
-    #endif
+    printf("Scenario: %s\n", name);
 
     print_test(name, "dict_add_D"      , test_add(dict_constructor, D_key    , D_value, one) );
     print_test(name, "dict_add_(null)" , test_add(dict_constructor, (void *)0, A_value, zero) );
