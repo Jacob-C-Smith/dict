@@ -32,35 +32,6 @@ int main ( int argc, const char* argv[] )
     // Destroy the dictionary
     dict_destroy(&p_dict);
 
-    // Create a dictionary from provided keys 
-    dict_from_keys(&p_dict, keys, 10);
-
-    // Copy the dictionary
-    dict_copy(p_dict, &p_dict_copy);
-
-    // Add "Iguana", "Capybara", and "Brown Bear"
-    dict_add(p_dict, "Iguana", (void *)0x1234);
-    dict_add(p_dict, "Capybara", (void *)0x5678);
-    dict_add(p_dict, "Brown Bear", (void *)0x9ABC);
-
-    // Remove "Birds" and "Iguana"
-    dict_pop(p_dict, "Birds", 0);
-    dict_pop(p_dict, "Iguana", 0);
-    dict_pop(p_dict, "Brown Bear", 0);
-
-    // Print the dictionarys' keys
-    print_all_keys(p_dict);
-
-    // Print the dictionary that was constructed from the keys
-    print_all_keys(p_dict);
-
-    // Print each value as a hexidecimal number
-    dict_foreach(p_dict, &print_value_as_integer);
-
-    // Destroy the dictionaries
-    dict_destroy(&p_dict);
-    dict_destroy(&p_dict_copy);
-
     // Success
     return EXIT_SUCCESS;
 }
