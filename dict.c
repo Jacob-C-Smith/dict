@@ -263,7 +263,7 @@ int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t
     }
 }
 
-const void *const dict_get ( const dict *const p_dict, const char *const key )
+const void *dict_get ( const dict *const p_dict, const char *const key )
 {
 
     // Argument check

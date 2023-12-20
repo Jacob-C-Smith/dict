@@ -98,7 +98,7 @@ DLLEXPORT int dict_from_keys ( const dict **const pp_dict, const char **const ke
  *
  * @return pointer to specified property's value on success, null pointer on error
  */
-DLLEXPORT const void *const dict_get ( const dict *const p_dict, const char *const key );
+DLLEXPORT const void *dict_get ( const dict *const p_dict, const char *const key );
 
 /** !
  *  Get a dictionarys' values, or the number of properties in the dictionary
