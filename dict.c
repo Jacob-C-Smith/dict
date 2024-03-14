@@ -9,6 +9,9 @@
 // Headers
 #include <dict/dict.h>
 
+// Internal type definitions
+typedef struct dict_item_s dict_item;
+
 // Structure definitions
 struct dict_item_s
 {
@@ -16,7 +19,7 @@ struct dict_item_s
     void   *value; // The value
     size_t  index; // The index in the iterable lists
 
-    struct dict_item_s *next; // The next entry
+    dict_item *next; // The next entry
 };
 
 struct dict_s
@@ -24,7 +27,7 @@ struct dict_s
 
     struct
     {
-        struct dict_item_s **data;  // Hash table contents
+        dict_item **data;  // Hash table contents
         size_t               max,   // Hash table elements
                              count; // Entries
     } entries;
@@ -40,9 +43,6 @@ struct dict_s
 
     mutex _lock; // Locked when writing values
 };
-
-// Internal type definitions
-typedef struct dict_item_s dict_item;
 
 int dict_create ( dict **const pp_dict )
 {
