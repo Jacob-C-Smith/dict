@@ -719,7 +719,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     }
 }
 
-int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size_t i) )
+int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size_t) )
 {
 
     // Argument check
