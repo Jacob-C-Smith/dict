@@ -271,7 +271,7 @@ const void *dict_get ( const dict *const p_dict, const char *const key )
     if ( key    == (void *) 0 ) goto no_name;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Initialized data
     dict_item *ret = p_dict->entries.data[p_dict->hash_function(key, strlen(key)) % p_dict->entries.max];
@@ -293,7 +293,7 @@ const void *dict_get ( const dict *const p_dict, const char *const key )
     val = (ret) ? ret->value : (void *)0;
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Return the value if it exists, otherwise null pointer
     return val;
@@ -329,7 +329,7 @@ size_t dict_values ( const dict *const p_dict, void **const values )
     if ( p_dict == (void *) 0 ) goto no_dictioanry;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Initialized data
     size_t entry_count = p_dict->entries.count;
@@ -339,7 +339,7 @@ size_t dict_values ( const dict *const p_dict, void **const values )
     {
 
         // Unlock
-        mutex_unlock(p_dict->_lock);
+        mutex_unlock(&p_dict->_lock);
 
         // Success
         return entry_count;
@@ -349,7 +349,7 @@ size_t dict_values ( const dict *const p_dict, void **const values )
     memcpy(values, p_dict->iterable.values, entry_count * sizeof(void *));
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -377,7 +377,7 @@ size_t dict_keys ( const dict *const p_dict, const char **const keys )
     if ( p_dict == (void *) 0 ) goto no_dictioanry;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Initialized data
     size_t entry_count = p_dict->entries.count;
@@ -387,7 +387,7 @@ size_t dict_keys ( const dict *const p_dict, const char **const keys )
     {
 
         // Unlock
-        mutex_unlock(p_dict->_lock);
+        mutex_unlock(&p_dict->_lock);
 
         // Return
         return entry_count;
@@ -397,7 +397,7 @@ size_t dict_keys ( const dict *const p_dict, const char **const keys )
     memcpy(keys, p_dict->iterable.keys, entry_count * sizeof(char *));
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -427,7 +427,7 @@ int dict_add ( dict *const p_dict, const char *const key,   void * const p_value
     if ( key    == (void *) 0 ) goto no_name;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Initialized data
     unsigned long long  h        = p_dict->hash_function((void *)key, strlen(key));
@@ -502,7 +502,7 @@ int dict_add ( dict *const p_dict, const char *const key,   void * const p_value
     }
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -537,7 +537,7 @@ int dict_add ( dict *const p_dict, const char *const key,   void * const p_value
                 #endif
 
                 // Unlock
-                mutex_unlock(p_dict->_lock);
+                mutex_unlock(&p_dict->_lock);
 
                 // Error
                 return 0;
@@ -553,7 +553,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     if ( key    == (void *) 0 ) goto no_name;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Initialized data
     unsigned long long  h = p_dict->hash_function(key, strlen(key));
@@ -659,7 +659,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     }
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -697,7 +697,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
                 #endif
 
                 // Unlock
-                mutex_unlock(p_dict->_lock);
+                mutex_unlock(&p_dict->_lock);
 
                 // Error
                 return 0;
@@ -711,7 +711,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
                 #endif
 
                 // Unlock
-                mutex_unlock(p_dict->_lock);
+                mutex_unlock(&p_dict->_lock);
 
                 // Error
                 return 0;
@@ -728,7 +728,7 @@ int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size
     if ( p_dict->entries.count ==          0 ) return 1;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Iterate over each hash table item
     for (size_t i = 0; i < p_dict->entries.count; i++)
@@ -737,7 +737,7 @@ int dict_foreach ( dict *const p_dict, void (*function)(const void * const, size
         function(p_dict->iterable.values[i], i);
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -840,7 +840,7 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
                 #endif
 
                 // Unlock
-                mutex_unlock(p_dict->_lock);
+                mutex_unlock(&p_dict->_lock);
 
                 // Error
                 return 0;
@@ -856,7 +856,7 @@ int dict_clear ( dict *const p_dict )
     if ( p_dict->entries.count ==          0 ) return 1;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Iterate over each hash table item
     for (size_t i = 0; i < p_dict->entries.max; i++)
@@ -917,7 +917,7 @@ int dict_clear ( dict *const p_dict )
     done:
 
     // Unlock
-    mutex_lock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -947,7 +947,7 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
     if ( p_dict->entries.count ==          0 ) return 1;
     
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // Iterate over each hash table item
     for (size_t i = 0; i < p_dict->entries.max; i++)
@@ -981,7 +981,7 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
     }
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Success
     return 1;
@@ -1022,13 +1022,13 @@ int dict_destroy ( dict **const pp_dict )
     dict *p_dict = *pp_dict;
 
     // Lock
-    mutex_lock(p_dict->_lock);
+    mutex_lock(&p_dict->_lock);
 
     // No more pointer for end user
     *pp_dict = (dict *) 0;
 
     // Unlock
-    mutex_unlock(p_dict->_lock);
+    mutex_unlock(&p_dict->_lock);
 
     // Remove all the dictionary properties
     if ( dict_clear(p_dict) == 0 ) goto failed_to_clear;
