@@ -17,11 +17,11 @@
 #include <stdbool.h>
 #include <string.h>
 
-// sync submodule
+// sync module
 #include <sync/sync.h>
 
-// crypto submodule
-#include <crypto/crypto.h>
+// hash cache module
+#include <hash_cache/hash.h>
 
 // Platform dependent macros
 #ifdef _WIN64
@@ -70,7 +70,7 @@ DLLEXPORT int dict_create ( dict **const pp_dict );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_construct ( dict **const pp_dict, size_t size, crypto_hash_function_64_t pfn_hash_function );
+DLLEXPORT int dict_construct ( dict **const pp_dict, size_t size, fn_hash64 pfn_hash_function );
 
 /** !
  *  Construct a dictionary from an array of strings

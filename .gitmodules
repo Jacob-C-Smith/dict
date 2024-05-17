@@ -7,3 +7,6 @@
 [submodule "extern/log"]
 	path = extern/log
 	url = https://github.com/Jacob-C-Smith/log
+[submodule "extern/hash-cache"]
+	path = extern/hash-cache
+	url = https://github.com/Jacob-C-Smith/hash-cache

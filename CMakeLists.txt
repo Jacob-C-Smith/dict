@@ -30,16 +30,16 @@ if ( NOT "${HAS_SYNC}")
     endif()
 endif()
 
-# Find the crypto module
-if ( NOT "${HAS_CRYPTO}")
+# Find the hash cache module
+if ( NOT "${HAS_HASH_CACHE}")
 
-    # Add the crypto directory
-    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/crypto ${CMAKE_SOURCE_DIR}/build/crypto)
+    # Add the hash cache directory
+    add_subdirectory(${CMAKE_SOURCE_DIR}/extern/hash-cache ${CMAKE_SOURCE_DIR}/build/hash-cache)
 
-    # Let any parent project know that this project has crypto
+    # Let any parent project know that this project has hash cache
     if(NOT PROJECT_IS_TOP_LEVEL)
-        set(HAS_CRYPTO true PARENT_SCOPE)
-        set(CRYPTO_INCLUDE_DIR ${CRYPTO_INCLUDE_DIR} PARENT_SCOPE)
+        set(HAS_HASH_CACHE true PARENT_SCOPE)
+        set(HASH_CACHE_INCLUDE_DIR ${HASH_CACHE_INCLUDE_DIR} PARENT_SCOPE)
     endif()
 endif()
 
@@ -81,12 +81,12 @@ target_link_libraries(dict_example dict)
 
 # Add source to the tester
 add_executable (dict_test "dict_test.c" "dict.c")
-add_dependencies(dict_test sync dict log)
+add_dependencies(dict_test sync dict hash_cache log)
 target_include_directories(dict_test PUBLIC ${DICT_INCLUDE_DIR} ${SYNC_INCLUDE_DIR} ${LOG_INCLUDE_DIR})
-target_link_libraries(dict_test sync dict log)
+target_link_libraries(dict_test sync dict hash_cache log)
 
 # Add source to the library
 add_library(dict SHARED "dict.c")
-add_dependencies(dict sync crypto)
-target_include_directories(dict PUBLIC ${DICT_INCLUDE_DIR} ${SYNC_INCLUDE_DIR} ${CRYPTO_INCLUDE_DIR})
-target_link_libraries(dict sync crypto)
+add_dependencies(dict sync hash_cache)
+target_include_directories(dict PUBLIC ${DICT_INCLUDE_DIR} ${SYNC_INCLUDE_DIR} ${HASH_CACHE_INCLUDE_DIR})
+target_link_libraries(dict sync hash_cache)
