@@ -45,6 +45,16 @@ struct dict_s;
  */
 typedef struct dict_s dict;
 
+// Initializer
+/** !
+ * This gets called at runtime before main. 
+ * 
+ * @param void
+ * 
+ * @return void
+ */
+DLLEXPORT void dict_init ( void ) __attribute__((constructor));
+
 // Allocaters
 /** !
  *  Allocate memory for a dictionary
@@ -213,3 +223,13 @@ DLLEXPORT int dict_free_clear ( const dict *const p_dict, void (*const free_func
  * @return 1 on success, 0 on error
  */
 DLLEXPORT int dict_destroy ( dict **const pp_dict );
+
+// Cleanup
+/** !
+ * This gets called at runtime after main
+ * 
+ * @param void
+ * 
+ * @return void
+ */
+DLLEXPORT void dict_exit ( void ) __attribute__((destructor));

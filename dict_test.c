@@ -111,10 +111,6 @@ int main(int argc, const char* argv[])
     timestamp t0 = 0,
               t1 = 0;
 
-    // Initialize the timer library
-    timer_init();
-    log_init(0, true);
-
     // Formatting
     printf(
         "╭─────────────╮\n"\

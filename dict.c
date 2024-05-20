@@ -44,6 +44,31 @@ struct dict_s
     mutex _lock; // Locked when writing values
 };
 
+// Data
+static bool initialized = false;
+
+void dict_init ( void )
+{
+
+    // State check
+    if ( initialized == true ) return;
+
+    // Initialize the log library
+    log_init();
+
+    // Initialize the sync library
+    sync_init();
+
+    // Initialize the hash cache library
+    hash_cache_init();
+
+    // Set the initialized flag
+    initialized = true;
+
+    // Done
+    return;
+}
+
 int dict_create ( dict **const pp_dict )
 {
 
@@ -1085,4 +1110,26 @@ int dict_destroy ( dict **const pp_dict )
                 return 0;
         }
     }
+}
+
+void dict_exit ( void )
+{
+    
+    // State check
+    if ( initialized == false ) return;
+
+    // Clean up the log library
+    log_exit();
+
+    // Clean up the sync library
+    sync_exit();
+
+    // Clean up the hash cache library
+    hash_cache_exit();
+
+    // Clear the initialized flag
+    initialized = false;
+
+    // Done
+    return;
 }
