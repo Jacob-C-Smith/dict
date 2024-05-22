@@ -13,10 +13,12 @@ void print_value_as_integer ( const void *const p_value, size_t i );
 int main ( int argc, const char* argv[] )
 {
 
+    // Suppress warnings
+    (void) argc;
+    (void) argv;
+
     // Initialized data
-    char     *keys[]      = { "Dogs", "Cats", "Birds", "Fish", (void*)0 };
-    dict     *p_dict      = (void *) 0;
-    dict     *p_dict_copy = (void *) 0;
+    dict *p_dict = (void *) 0;
 
     // Make a dictionary with 4 hash table items
     dict_construct(&p_dict, 4, 0);
@@ -45,7 +47,7 @@ int print_all_keys(dict* p_dict)
 
     // Get the dictionarys' keys
     size_t key_count = dict_keys(p_dict, 0);
-    char** keys = calloc(key_count, sizeof(char*));
+    const char** keys = calloc(key_count, sizeof(char*));
 
     dict_keys(p_dict, keys);
 
@@ -65,6 +67,9 @@ int print_all_keys(dict* p_dict)
 
 void print_value_as_integer ( const void *const p_value, size_t i )
 {
+
+    // Suppress warnings
+    (void) i;
 
     // Print the value as a hexidecimal number
     printf("0x%zx\n",(size_t) p_value);

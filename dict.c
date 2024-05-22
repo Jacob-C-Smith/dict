@@ -224,7 +224,7 @@ int dict_construct ( dict **const pp_dict, size_t size, fn_hash64 pfn_hash_funct
     }
 }
 
-int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t size )
+int dict_from_keys ( dict **const pp_dict, const char **const keys, size_t size )
 {
 
     // Argument check
@@ -288,7 +288,7 @@ int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t
     }
 }
 
-const void *dict_get ( const dict *const p_dict, const char *const key )
+const void *dict_get ( dict *const p_dict, const char *const key )
 {
 
     // Argument check
@@ -347,7 +347,7 @@ const void *dict_get ( const dict *const p_dict, const char *const key )
     }
 }
 
-size_t dict_values ( const dict *const p_dict, void **const values )
+size_t dict_values ( dict *const p_dict, void **const values )
 {
 
     // Argument check
@@ -395,7 +395,7 @@ size_t dict_values ( const dict *const p_dict, void **const values )
     }
 }
 
-size_t dict_keys ( const dict *const p_dict, const char **const keys )
+size_t dict_keys ( dict *const p_dict, const char **const keys )
 {
 
     // Argument check
@@ -662,7 +662,7 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
     done:
 
     // Free the pop'd dict_item
-    DICT_REALLOC(k, 0);
+    if ( DICT_REALLOC(k, 0) ) goto failed_to_free;
 
     // Decrement entries
     p_dict->entries.count--;
@@ -737,6 +737,14 @@ int dict_pop ( dict *const p_dict, const char *const key, const void **const pp_
 
                 // Unlock
                 mutex_unlock(&p_dict->_lock);
+
+                // Error
+                return 0;
+                
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
 
                 // Error
                 return 0;
@@ -826,10 +834,10 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
 
     // Free the lists
     // Free the keys
-    DICT_REALLOC(keys, 0);
+    if ( DICT_REALLOC(keys, 0) ) goto failed_to_free;
 
     // Free the values
-    DICT_REALLOC(values, 0);
+    if ( DICT_REALLOC(values, 0) ) goto failed_to_free;
 
     *pp_dict = i_dict;
 
@@ -870,6 +878,17 @@ int dict_copy ( dict *const p_dict, dict **const pp_dict )
                 // Error
                 return 0;
         }
+
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
     }
 }
 
@@ -902,7 +921,7 @@ int dict_clear ( dict *const p_dict )
                 dict_item *n = i_di->next;
 
                 // Free the item
-                DICT_REALLOC(i_di, 0);
+                if ( DICT_REALLOC(i_di, 0) ) goto failed_to_free;
 
                 // Iterate
                 i_di = n;
@@ -960,10 +979,21 @@ int dict_clear ( dict *const p_dict )
                 // Error
                 return 0;
         }
+
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
     }
 }
 
-int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const void *const) )
+int dict_free_clear ( dict *const p_dict, void (*const free_func)(const void *const) )
 {
 
     // Argument check
@@ -994,7 +1024,7 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
                 free_func(i_di->value);
 
                 // Free the item
-                DICT_REALLOC(i_di, 0);
+                if ( DICT_REALLOC(i_di, 0) ) goto failed_to_free;
 
                 // Iterate
                 i_di = n;
@@ -1031,7 +1061,17 @@ int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const vo
 
                 // Error
                 return 0;
+        }
 
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
         }
     }
 }
@@ -1059,20 +1099,20 @@ int dict_destroy ( dict **const pp_dict )
     if ( dict_clear(p_dict) == 0 ) goto failed_to_clear;
 
     // Free the hash table
-    DICT_REALLOC(p_dict->entries.data, 0);
+    if ( DICT_REALLOC(p_dict->entries.data, 0) ) goto failed_to_free;
 
     // Free the iterables
     // Free the keys
-    DICT_REALLOC(p_dict->iterable.keys, 0);
+    if ( DICT_REALLOC(p_dict->iterable.keys, 0) ) goto failed_to_free;
 
     // Free the values
-    DICT_REALLOC(p_dict->iterable.values, 0);
+    if ( DICT_REALLOC(p_dict->iterable.values, 0) ) goto failed_to_free;
 
     // Destroy the mutex
     mutex_destroy(&p_dict->_lock);
 
     // Free the dictionary
-    DICT_REALLOC(p_dict, 0);
+    if ( DICT_REALLOC(p_dict, 0) ) goto failed_to_free;
 
     // Success
     return 1;
@@ -1104,6 +1144,17 @@ int dict_destroy ( dict **const pp_dict )
             failed_to_clear:
                 #ifndef NDEBUG
                     log_warning("[dict] Call to \"dict_clear\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
+                #endif
+
+                // Error
+                return 0;
+        }
+
+        // Standard library errors
+        {
+            failed_to_free:
+                #ifndef NDEBUG
+                    printf("[Standard Library] Call to \"realloc\" returned an erroneous value in call to function \"%s\"\n", __FUNCTION__);
                 #endif
 
                 // Error

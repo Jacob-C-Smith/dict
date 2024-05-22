@@ -12,6 +12,8 @@ set(CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/extern/)
 # Comment out for Debug mode
 set(IS_DEBUG_BUILD CMAKE_BUILD_TYPE STREQUAL "Debug")
 
+add_compile_options(-gdwarf-4 -Wall -Wextra -Wpointer-arith -Wstrict-prototypes -Wformat-security -Wfloat-equal -Wshadow -Wconversion -Wlogical-not-parentheses -Wnull-dereference)
+
 # Set debug mode
 if (${IS_DEBUG_BUILD})
     add_compile_definitions(NDEBUG)

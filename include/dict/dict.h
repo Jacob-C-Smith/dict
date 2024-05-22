@@ -21,7 +21,7 @@
 #include <sync/sync.h>
 
 // hash cache module
-#include <hash_cache/hash.h>
+#include <hash_cache/hash_cache.h>
 
 // Platform dependent macros
 #ifdef _WIN64
@@ -94,7 +94,7 @@ DLLEXPORT int dict_construct ( dict **const pp_dict, size_t size, fn_hash64 pfn_
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_from_keys ( const dict **const pp_dict, const char **const keys, size_t size );
+DLLEXPORT int dict_from_keys ( dict **const pp_dict, const char **const keys, size_t size );
 
 // Accessors
 /** !
@@ -108,7 +108,7 @@ DLLEXPORT int dict_from_keys ( const dict **const pp_dict, const char **const ke
  *
  * @return pointer to specified property's value on success, null pointer on error
  */
-DLLEXPORT const void *dict_get ( const dict *const p_dict, const char *const key );
+DLLEXPORT const void *dict_get ( dict *const p_dict, const char *const key );
 
 /** !
  *  Get a dictionarys' values, or the number of properties in the dictionary
@@ -121,7 +121,7 @@ DLLEXPORT const void *dict_get ( const dict *const p_dict, const char *const key
  *
  * @return 1 on success, 0 on error, if values != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_values ( const dict *const p_dict, void **const values );
+DLLEXPORT size_t dict_values ( dict *const p_dict, void **const values );
 
 /** !
  *  Get a dictionarys' keys, or the number of properties in the dictionary
@@ -134,7 +134,7 @@ DLLEXPORT size_t dict_values ( const dict *const p_dict, void **const values );
  *
  * @return 1 on success, 0 on error, if keys != null, else number of properties in dictionary
  */
-DLLEXPORT size_t dict_keys ( const dict *const p_dict, const char **const keys );
+DLLEXPORT size_t dict_keys ( dict *const p_dict, const char **const keys );
 
 // Mutators
 /** !
@@ -210,7 +210,7 @@ DLLEXPORT int dict_clear ( dict *const p_dict );
  *
  * @return 1 on success, 0 on error
  */
-DLLEXPORT int dict_free_clear ( const dict *const p_dict, void (*const free_func)(const void *const) );
+DLLEXPORT int dict_free_clear ( dict *const p_dict, void (*const free_func)(const void *const) );
 
 // Destructors
 /** !
