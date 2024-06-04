@@ -22,6 +22,7 @@
 
 // hash cache module
 #include <hash_cache/hash_cache.h>
+#include <hash_cache/hash.h>
 
 // Platform dependent macros
 #ifdef _WIN64
