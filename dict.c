@@ -158,7 +158,7 @@ int dict_construct ( dict **const pp_dict, size_t size, fn_hash64 pfn_hash_funct
 
     // Default
     else
-        p_dict->pfn_hash_function = hash_fnv64;
+        p_dict->pfn_hash_function = hash_xxh64;
 
 
     // Error checking
