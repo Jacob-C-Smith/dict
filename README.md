@@ -8,7 +8,8 @@
  A minimal, thread-safe dictionary implementation written in C. 
  
 
-
+ > 0 [Commentary](#commentary)
+ >
  > 1 [Download](#download)
  >
  > 2 [Build](#build)
@@ -24,6 +25,19 @@
  >> 5.1 [Type definitions](#type-definitions)
  >>
  >> 5.2 [Function definitions](#function-definitions)
+
+ ## Commentary
+ - I implemented the dictionary using a hash table.
+ - I opted to use chaining over open addressing.
+ - I opted to use xxHash after evaluating a few hashing functions.
+ - I evaluated the hashing functions by running the tester 1024 times, and averaging the run times.
+ 
+ | Hash function           | Time (μs) |
+ |-------------------------|-----------|
+ | xxHash                  | 193.247   |
+ | Cyclic redundancy check | 197.451   |
+ | Fowler–Noll–Vo Hash     | 216.446   |
+ | MurMur Hash             | 241.187   |
 
  ## Download
  To download dict, execute the following command
