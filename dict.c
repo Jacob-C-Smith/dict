@@ -158,8 +158,7 @@ int dict_construct ( dict **const pp_dict, size_t size, fn_hash64 pfn_hash_funct
 
     // Default
     else
-        p_dict->pfn_hash_function = hash_xxh64;
-
+        p_dict->pfn_hash_function = hash_crc64;
 
     // Error checking
     if ( p_dict->entries.data    == (void *) 0 ) goto no_mem;
