@@ -2,29 +2,36 @@
 [![CMake](https://github.com/Jacob-C-Smith/dict/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/dict/actions/workflows/cmake.yml)
 
 **Dependencies:**\
-[![crypto](https://github.com/Jacob-C-Smith/crypto/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/crypto/actions/workflows/cmake.yml) [![sync](https://github.com/Jacob-C-Smith/sync/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/sync/actions/workflows/cmake.yml)
-
+[![hash-cache](https://github.com/Jacob-C-Smith/hash-cache/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/hash-cache/actions/workflows/cmake.yml)
+[![sync](https://github.com/Jacob-C-Smith/sync/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/sync/actions/workflows/cmake.yml)
+[![log](https://github.com/Jacob-C-Smith/log/actions/workflows/cmake.yml/badge.svg)](https://github.com/Jacob-C-Smith/log/actions/workflows/cmake.yml)
 
  A minimal, thread-safe dictionary implementation written in C. 
- 
 
- > 0 [Commentary](#commentary)
+ > 0 [Try it](#try-it)
  >
- > 1 [Download](#download)
+ > 1 [Commentary](#commentary)
+ > 
+ > 2 [Download](#download)
  >
- > 2 [Build](#build)
+ > 3 [Build](#build)
  >
- > 3 [Example](#example)
+ > 4 [Example](#example)
  >
- >> 3.1 [Example output](#example-output)
+ >> 4.1 [Example output](#example-output)
  >
- > 4 [Tester](#tester)
+ > 5 [Tester](#tester)
  >
- > 5 [Definitions](#definitions)
+ > 6 [Definitions](#definitions)
  >
- >> 5.1 [Type definitions](#type-definitions)
+ >> 6.1 [Type definitions](#type-definitions)
  >>
- >> 5.2 [Function definitions](#function-definitions)
+ >> 6.2 [Function definitions](#function-definitions)
+
+## Try it
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Jacob-C-Smith/dict?quickstart=1)
+
+Wait for a few moments, then click the play button on the bottom of the window. This will run the example program.
 
  ## Commentary
  - I implemented the dictionary using a hash table.

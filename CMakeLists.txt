@@ -1,5 +1,5 @@
-﻿# Need CMake 3.0
-cmake_minimum_required (VERSION 3.28.0)
+﻿# Need CMake 3.16
+cmake_minimum_required (VERSION 3.16.0)
 
 # This is the name of the repository
 project ("dict")
