@@ -191,7 +191,7 @@ int print_time_pretty ( double seconds )
     return 1;
 }
 
-int run_tests()
+int run_tests ( void )
 {
 
     // ... -> []
@@ -575,7 +575,7 @@ int print_test ( const char *scenario_name, const char *test_name, bool passed )
     return 1;
 }
 
-int print_final_summary ()
+int print_final_summary ( void )
 {
 
     // Accumulate
@@ -604,7 +604,7 @@ bool test_add ( int(*dict_constructor)(dict **pp_dict), char *key, void *value, 
     // Build the dict
     dict_constructor(&p_dict);
 
-    result = dict_add(p_dict, key, value);
+    result = (result_t) dict_add(p_dict, key, value);
 
     // Free the dict
     dict_destroy(&p_dict);
